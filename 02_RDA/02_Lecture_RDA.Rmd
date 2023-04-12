@@ -1,0 +1,351 @@
+---
+title: "Redundancy Analysis"
+author: "Radchuk Viktoriia"
+date: "2023-03-18"
+output:
+  revealjs::revealjs_presentation:
+    self_contained: false
+    incremental: true
+    css: ["../css/default.css"]
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(vegan)
+library(tidyverse)
+library(ggplot2)
+```
+
+# What is RDA
+- A canonical (i.e. constrained) ordination method based on eigenvector analysis.     
+- Combines multiple regression and PCA.     
+- Finds linear combinations of all explanatory variables that best explain the variation in the response matrix.     
+
+# Mathematical notation
+We have $n$ objects (sites) with $p$ response variables (often species if dealing with community data) and $m$ explanatory (environmental) variables. 
+
+
+$$
+\mathbf{Y} =
+\begin{bmatrix}
+y_{1_1} & y_{1_2} & y_{1_3} & \dots y_{1_{p}} \\
+y_{2_1} & y_{2_2} & y_{2_3} & \dots y_{2_{p}} \\
+y_{3_1} & y_{3_2} & y_{3_3} & \dots y_{3_{p}} \\
+\vdots & \vdots & \vdots & \ddots  \\
+y_{n_1} & y_{n_2} & y_{n_3} & \dots y_{n_{p}}\\
+\end{bmatrix}; 
+\mathbf{X} =
+\begin{bmatrix}
+x_1  & x_{1_2}  & \dots x_{1_{m}}\\
+x_2  & x_{2_2} & \dots x_{2_{m}} \\
+x_3  & x_{3_3} & \dots x_{3_{m}} \\
+\vdots  & \vdots & \ddots  \\
+x_{n_1}  & x_{n_2} & \dots x_{n_{m}} \\
+\end{bmatrix}
+$$
+The method is applied to matrix $Y$ of centered response variables and a matrix $X$ of centered (or standardised) explanatory variables. 
+
+
+# How it works
+- the method regresses each $y$ variable on explanatory matrix $X$ and computes the fitted values $\widehat{y}$. 
+$y_1 = \alpha + \beta_1\times x_1 + \beta_2\times x_2 + ... + \beta_m\times x_m + \epsilon_i$;   
+$\epsilon_i \sim N(0, \sigma^2)$    
+
+- Combines all vectors $\widehat{y}$ into a matrix $\widehat{Y}$ of fitted values.      
+- Computes PCA on the matrix $\widehat{Y}$ of fitted values --> gives a vector of canonical eigenvalues and a matrix $U$ of respective canonical eigenvectors.       
+- The ordination axes explain the variation in the data of the response matrix --> this is a statistical analysis.    
+
+
+# Requeirements / Assumptions
+- For RDA explanatory variables are often standardized (because these are usually measured in different units and thus are not comparable).        
+- RDA can be computed on a covariance or a correlation response matrix. Remember: if the variables are in different units or represent quantities that are not comparable, then they should be standardized prior to the analysis (i.e. PCA will be computed on correlation matrix).   
+- Condition on number of samples for number of explanatory variables: $m<n-1$.   
+
+
+# Application: Impact of environment on mammalian life history traits
+We aim to assess how the __environment__ in which species live affect their __life history and other traits__.     
+We focus on >140 mammal species distributed in SE Asia.      
+As example here we focus on following __environmental variables__: mean yearly precipitation, mean yearly temperature, actual evapotransporation rate and human population density. All environmental variables were measured within the distribution range of the studied species.       
+We looked at the selection of (available) traits, using PanTHERIA database (Jones et al. 2009).     
+
+
+# Data
+```{r LH data read, echo = TRUE}
+#  reading in the file with the 143 species of interest
+spSEAsia <- read.csv(file = here::here('data', 'Species_SEAsia_02_02_16_fin.csv'))
+str(spSEAsia)
+
+# read in the PanTheria database
+pant <- read.delim(file = here::here('data', 'Pantheria.txt'))
+str(pant)
+```
+
+   
+```{r data prep}
+## joining both datasets together
+pant$Sp_bin <- pant$MSW05_Binomial
+LH <- merge(pant, spSEAsia, by = "Sp_bin")
+nrow(LH)  
+
+## Select 5 life history traits and 3 env variables of interest
+LH_subs <- LH %>%
+  select('Sp_bin', 'X5.1_AdultBodyMass_g',  'X15.1_LitterSize',
+         'X6.1_DietBreadth', 'X22.1_HomeRange_km2',
+         'X27.2_HuPopDen_Mean_n.km2', 'X28.1_Precip_Mean_mm',
+         'X28.2_Temp_Mean_01degC', 'X30.1_AET_Mean_mm')
+
+
+# replacing -999 with NA
+LH_subs[LH_subs == -999] <-  NA
+
+LH_noNA <- na.omit(LH_subs)
+names(LH_noNA) <- sub("^[^_]*_", "", names(LH_noNA))
+names(LH_noNA) <- sub("_[^_]*$", "", names(LH_noNA))
+
+```
+
+# Some animals in the dataset
+
+::: {.pull-left}  
+<p style="text-align:center;">
+<img src="img/Sri_Lankan_elephant_(Elephas_maximus_maximus)_female_and_young_wikip.jpeg" height = "250"/>
+</p>
+<p style = "font-size: 40%;">@wikipedia: Elephas maximus</p>
+
+<p style="text-align:center;">
+<img src="img/Canis_aureus_syriacus_wikip.jpeg" height = "250"/>
+</p>
+<p style = "font-size: 40%;">@wikipedia: Canis aureus</p>
+
+:::
+
+::: {.pull-right}  
+<p style="text-align:center;">
+<img src="img/Tupaia_glis_wikip.jpeg" height = "250"/>
+</p>
+<p style = "font-size: 40%;">@wikipedia: Tupaia glis</p>
+
+<p style="text-align:center;">
+<img src="img/Bornean_Tarsier_(Cephalopachus_bancanus_borneanus)_wikip.jpeg" height = "250"/>
+</p>
+<p style = "font-size: 40%;">@wikipedia: Tarsius bancanus</p>
+
+:::
+
+
+# Prepare data for RDA
+```{r prep for RDA, echo=TRUE}
+str(LH_noNA)
+traits_SEas <- LH_noNA %>%
+  select('AdultBodyMass',  'LitterSize',
+         'DietBreadth', 'HomeRange')
+
+env_SEas <- LH_noNA %>%
+  select('HuPopDen_Mean', 'Precip_Mean',
+            'Temp_Mean', 'AET_Mean') %>% 
+  mutate_all(list(z = ~ scale(.))) %>% 
+  select(ends_with("_z"))
+
+```
+We standardize the explanatory variables prior to running RDA because these variables are in very different units.    
+
+
+
+# Run RDA
+```{r run RDA, echo = TRUE}
+rda_env <- rda(traits_SEas ~ ., env_SEas, scale = TRUE)
+
+```
+Since our response variables (adult body mass, litter size, diet breadth and home range) are in very different units, we use option 'scale=', so that all variables are now unitless and comparable. In other words, the PCA on the matrix of fitted values $\widehat{Y}$ will be run on correlation matrix.
+
+
+# Interpreting RDA
+```{r interpret RDA, echo = TRUE}
+summary(rda_env)
+
+```
+::: {.left-align} 
+__Partitioning of correlations (variance)__: The total variance (correlation) is partitioned into constrained and unconstrained components. The Constrained variance is the part of the variance in matrix $Y$ that is explained by explanatory variables. When calculated as proportion it is equivalent to an unadjusted $R^2$ in multiple regression (we look at how to calculate adjusted one below).
+:::
+
+# Interpreting RDA
+```{r interpret RDA2, echo = TRUE}
+summary(rda_env)
+
+```
+::: {.left-align} 
+<p style = "font-size: 80%;"> __Importance of components__: Shows eigenvalues and the proportion they explain for 4 canonical axes (RDA1 - RDA4) and four unconstrained axes for residuals (PC1-PC4). There are 4 in each case because in our example the number of response variables ($p$) is the same as the number of explanatory variables ($m$) and is 4. The canonical axes (RDAs) measure the amount of variation in $Y$ explained by  $X$ whereas the unconstrained residual eigenvalues (PCs) measure the variance represented by residual axes.</p>    
+:::
+
+# Interpreting RDA
+```{r interpret RDA3}
+summary(rda_env)
+
+```
+::: {.left-align} 
+<p style = "font-size: 80%;">__Species scores__: Coordinates of the tips of vectors corresponding to response variables.       
+__Site scores__: Coordinates of the sites in the space of the species in matrix $Y$.    
+__Site constraints__: Coordinates of the sites in the space of the explanatory variables $X$. These are fitted values for the site scores.     
+__Biplot scores for constraining variables__: coordinates of the tips of vectors corresponding to explanatory variables.    
+__Centroids for factor constraints__: coordinates of centroids for each level of the factor variables (our example did not include factors so we do not have this in the output).</p>
+:::
+
+
+# Adjusted $R^2$
+The proportion of variance in $Y$ that is explained by $X$ is biased like the unadjusted $R^2$ in multiple regression.    
+The more variables in $X$, the higher will be the variance explained.   
+To deal with this the adjusted $R^2$ was developed, based on Ezekiel's formula (Ezekiel 1930):    
+$$R^2{_{adj}}= 1-  \frac{n -1}{n - m - 1} \times (1 - R^2)$$
+where $n$ is the number of sites, and $m$ is the number of degrees of freedom in the model.  
+
+
+```{r calc R2, echo = TRUE}
+RsquareAdj(rda_env)
+
+```
+<span style="color:blue"> What does this mean?</span> 
+
+# Scaling 1 and Scaling 2
+- __Scaling 1__: distance biplot. The positions of objects can be approximated by projecting them at right angle on response variables or on quantitative explanatory variables. The angles between response and explanatory variables represent their correlations (<span style = 'color:orange'>but not among response variables</span>). __Distances among objects and between centroids and objects approximate their Euclidean distances.__           
+- __Scaling 2__: correlation biplot. The positions of objects can be approximated by projecting them at right angle on response variables or on quantitative explanatory variables. __The angles between response and explanatory variables, as well as among explanatory variables and among response variables represent their correlations.__ Distances among centroids and between centroids and objects do not approximate their Euclidean distances.     
+
+
+
+# Visualize RDA results
+```{r plot RDA, echo = TRUE,  out.height='80%', out.width='80%', fig.align='center'}
+par(mfrow = c(1, 2))
+plot(rda_env, scaling = 1, main ='Scaling 1')
+plot(rda_env, scaling = 2, main = 'Scaling 2')
+```
+
+
+
+# Make your plot nicer
+```{r custom-plotRDA, out.height='70%', out.width='70%', fig.align= 'center'}
+plt_RDA <- scores(rda_env, choices = c(1,2), scaling = 2, tidy = TRUE)
+
+LH_noNA$label <- rownames(LH_noNA)
+vis_RDA <- merge(subset(plt_RDA, score =='sites'), LH_noNA, by = 'label')
+
+spec <- plt_RDA %>%
+  filter(score == 'species')
+expl <- plt_RDA %>%
+  filter(score == 'biplot')
+
+ggplot(vis_RDA, aes(x = RDA1, y = RDA2)) +
+   geom_text(aes(label = bin), check_overlap = TRUE) +
+  geom_segment(data = spec,
+               aes(x=0, y=0, xend=RDA1, yend=RDA2),
+               col ='darkgrey') +
+  geom_text(data = spec, aes(label = label), check_overlap = TRUE,
+            nudge_y = 0.15, col = 'darkgrey') +
+  geom_segment(data = expl,
+               aes(x=0, y=0, xend=RDA1, yend=RDA2),
+               col ='blue', 
+               arrow = arrow(length=unit(.2, 'cm'))) +
+  geom_text(data = expl, aes(label = label), 
+            nudge_y = 0.15, col = 'blue') +
+theme_bw() +
+  geom_hline(yintercept = 0, lty = 3) +
+  geom_vline(xintercept = 0, lty = 3) 
+
+```
+Controversy around whether to plot sites (samples) and descriptors (our explanatory variables) together.    
+
+
+# Significance testing  
+Permutation tests are used to asses the significance of the whole model and of each axis.   
+The permutable units can be either rows of the $Y$ matrix or rows of $X$ matrix. Often response data are being permuted.   
+Null model: no linear relation between the response variables in $Y$ and explanatory variables $X$.    
+We compute a so-called 'pseudo- F statistics' as the ratio of sum of squares of fitted values (explained variation) to the residual sum of squares.    
+```{r sign, echo = TRUE}
+anova.cca(rda_env, step = 1000)
+
+```
+
+# Significance per axis term
+```{r sign-per axis, echo = TRUE}
+anova.cca(rda_env, by ='axis', step = 1000)
+```
+
+# Significance per model term
+```{r sign-per term, echo = TRUE}
+anova.cca(rda_env, by = 'margin', step = 1000)
+anova.cca(rda_env, by = 'term', step = 1000)
+```
+
+
+# Collinearity  
+Variance Inflation Factors (VIF) can be used to assess collinearity. VIFs measure the proportion by which the variance of the regression coefficient is inflated in the presence of other explanatory variables. Values > 20 mean strong collinearity.   
+```{r VIFs, echo = TRUE}
+vif.cca(rda_env)
+
+```
+
+
+# Variation partitioning 
+Often the explanatory variables can be grouped  into sets.    
+__Traits__: life history traits, physiological traits, behavioural traits    
+__Environment__: biotic variables and abiotic variables; anthropogenic variables and nature-like variables; climatic variables and habitat variables    
+
+
+# Variation partitioning
+Let us have two matrices of explanatory variables: $X1$ and $X2$ and a matrix of response variables $Y$.  
+```{r varPart, fig.align='center', out.height='50%', out.width='50%'}
+showvarparts(2)
+
+```
+Part of the variation in $Y$ matrix is explained by $X1$ (fraction $a+c$), a part is explained by $X2$ (fraction $b+c$) and a part is unexplained variation (fraction $d$). Since variables in both sets are rarely fully independent, we have a proportion of variation that is explained by both datasets jointly (fraction $c$).
+
+# How variation partitioning works
+- Run RDA with $X1$ as explanatory variables (we obtain fraction $a+c$);
+- Run RDA with $X2$ as explanatory variables (we obtain fraction $b+c$);
+- Run RDA with both $X1$ and $X2$ as explanatory variables (we obtain fraction $a+b+c$);
+- Compute adjusted $R^2$ of these RDAs;
+- Allows estimating the adjusted $R^2$ for each fraction.
+This all is done with function `varpart()` in vegan package. 
+
+# Application of varpart
+We use the plant community data and assess how it is affected by chemical composition of the soil (e.g. N, P, K, Al etc) and by physical soil properties (i.e. cover of bare soil and depth of the humus layer)
+
+```{r  varespec, echo = TRUE}
+data(varespec); data(varechem)
+str(varespec)
+```
+
+# Explanatory data
+```{r varechem, echo = TRUE}
+str(varechem)
+
+```
+
+# Variation partitioning of plant community data
+```{r varPart varespec, echo = TRUE}
+part.veg <- varpart(varespec, ~ N + P + K + Ca + Mg + S + Al + Fe + Mn + Mo + pH, ~Baresoil + Humdepth, data = varechem)
+part.veg
+
+```
+
+
+# Visualize variation partitioning
+```{r varPart varespec plot, echo = TRUE, fig.align='center', out.height= '60%', out.width= '60%'}
+plot(part.veg)
+```
+
+
+# Questions?  
+
+
+# Check-up
+- What types of variables can be used as explanatory variables in RDA?    
+- What types of variables are allowed as response variables in RDA?   
+- Can RDA be applied if variables in response matrix and in explanatory matrix are non-linearly related?     
+
+
+
+

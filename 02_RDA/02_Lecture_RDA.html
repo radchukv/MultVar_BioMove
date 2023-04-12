@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Radchuk Viktoriia" />
+  <meta name="dcterms.date" content="2023-03-18" />
+  <title>Redundancy Analysis</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="02_Lecture_RDA_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="02_Lecture_RDA_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="../css/default.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="02_Lecture_RDA_files/header-attrs-2.20/header-attrs.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Redundancy Analysis</h1>
+    <h2 class="author">Radchuk Viktoriia</h2>
+    <h3 class="date">2023-03-18</h3>
+</section>
+
+<section id="what-is-rda" class="title-slide slide level1">
+<h1>What is RDA</h1>
+<ul>
+<li class="fragment">A canonical (i.e. constrained) ordination method
+based on eigenvector analysis.<br />
+</li>
+<li class="fragment">Combines multiple regression and PCA.<br />
+</li>
+<li class="fragment">Finds linear combinations of all explanatory
+variables that best explain the variation in the response matrix.</li>
+</ul>
+</section>
+
+<section id="mathematical-notation" class="title-slide slide level1">
+<h1>Mathematical notation</h1>
+<p>We have <span class="math inline">\(n\)</span> objects (sites) with
+<span class="math inline">\(p\)</span> response variables (often species
+if dealing with community data) and <span
+class="math inline">\(m\)</span> explanatory (environmental)
+variables.</p>
+<p><span class="math display">\[
+\mathbf{Y} =
+\begin{bmatrix}
+y_{1_1} &amp; y_{1_2} &amp; y_{1_3} &amp; \dots y_{1_{p}} \\
+y_{2_1} &amp; y_{2_2} &amp; y_{2_3} &amp; \dots y_{2_{p}} \\
+y_{3_1} &amp; y_{3_2} &amp; y_{3_3} &amp; \dots y_{3_{p}} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots  \\
+y_{n_1} &amp; y_{n_2} &amp; y_{n_3} &amp; \dots y_{n_{p}}\\
+\end{bmatrix};
+\mathbf{X} =
+\begin{bmatrix}
+x_1  &amp; x_{1_2}  &amp; \dots x_{1_{m}}\\
+x_2  &amp; x_{2_2} &amp; \dots x_{2_{m}} \\
+x_3  &amp; x_{3_3} &amp; \dots x_{3_{m}} \\
+\vdots  &amp; \vdots &amp; \ddots  \\
+x_{n_1}  &amp; x_{n_2} &amp; \dots x_{n_{m}} \\
+\end{bmatrix}
+\]</span> The method is applied to matrix <span
+class="math inline">\(Y\)</span> of centered response variables and a
+matrix <span class="math inline">\(X\)</span> of centered (or
+standardised) explanatory variables.</p>
+</section>
+
+<section id="how-it-works" class="title-slide slide level1">
+<h1>How it works</h1>
+<ul>
+<li class="fragment"><p>the method regresses each <span
+class="math inline">\(y\)</span> variable on explanatory matrix <span
+class="math inline">\(X\)</span> and computes the fitted values <span
+class="math inline">\(\widehat{y}\)</span>. <span
+class="math inline">\(y_1 = \alpha + \beta_1\times x_1 + \beta_2\times
+x_2 + ... + \beta_m\times x_m + \epsilon_i\)</span>;<br />
+<span class="math inline">\(\epsilon_i \sim N(0,
+\sigma^2)\)</span></p></li>
+<li class="fragment"><p>Combines all vectors <span
+class="math inline">\(\widehat{y}\)</span> into a matrix <span
+class="math inline">\(\widehat{Y}\)</span> of fitted values.<br />
+</p></li>
+<li class="fragment"><p>Computes PCA on the matrix <span
+class="math inline">\(\widehat{Y}\)</span> of fitted values –&gt; gives
+a vector of canonical eigenvalues and a matrix <span
+class="math inline">\(U\)</span> of respective canonical
+eigenvectors.<br />
+</p></li>
+<li class="fragment"><p>The ordination axes explain the variation in the
+data of the response matrix –&gt; this is a statistical
+analysis.</p></li>
+</ul>
+</section>
+
+<section id="requeirements-assumptions"
+class="title-slide slide level1">
+<h1>Requeirements / Assumptions</h1>
+<ul>
+<li class="fragment">For RDA explanatory variables are often
+standardized (because these are usually measured in different units and
+thus are not comparable).<br />
+</li>
+<li class="fragment">RDA can be computed on a covariance or a
+correlation response matrix. Remember: if the variables are in different
+units or represent quantities that are not comparable, then they should
+be standardized prior to the analysis (i.e. PCA will be computed on
+correlation matrix).<br />
+</li>
+<li class="fragment">Condition on number of samples for number of
+explanatory variables: <span
+class="math inline">\(m&lt;n-1\)</span>.</li>
+</ul>
+</section>
+
+<section
+id="application-impact-of-environment-on-mammalian-life-history-traits"
+class="title-slide slide level1">
+<h1>Application: Impact of environment on mammalian life history
+traits</h1>
+<p>We aim to assess how the <strong>environment</strong> in which
+species live affect their <strong>life history and other
+traits</strong>.<br />
+We focus on &gt;140 mammal species distributed in SE Asia.<br />
+As example here we focus on following <strong>environmental
+variables</strong>: mean yearly precipitation, mean yearly temperature,
+actual evapotransporation rate and human population density. All
+environmental variables were measured within the distribution range of
+the studied species.<br />
+We looked at the selection of (available) traits, using PanTHERIA
+database (Jones et al. 2009).</p>
+</section>
+
+<section id="data" class="title-slide slide level1">
+<h1>Data</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#  reading in the file with the 143 species of interest</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>spSEAsia <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&#39;data&#39;</span>, <span class="st">&#39;Species_SEAsia_02_02_16_fin.csv&#39;</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(spSEAsia)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    143 obs. of  7 variables:
+##  $ ID      : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Sp_bin  : chr  &quot;Aeromys tephromelas&quot; &quot;Arctogalidia trivirgata&quot; &quot;Arctonyx collaris&quot; &quot;Atherurus macrourus&quot; ...
+##  $ Area    : num  362087 2497556 5509688 2671967 362969 ...
+##  $ Genus   : chr  &quot;Aeromys&quot; &quot;Arctogalidia&quot; &quot;Arctonyx&quot; &quot;Atherurus&quot; ...
+##  $ Species : chr  &quot;tephromelas&quot; &quot;trivirgata&quot; &quot;collaris&quot; &quot;macrourus&quot; ...
+##  $ Location: chr  &quot;Sunda&quot; &quot;Both&quot; &quot;Indochina&quot; &quot;Indochina&quot; ...
+##  $ Cat5    : chr  &quot;Sunda&quot; &quot;Both&quot; &quot;Indochina&quot; &quot;Indochina&quot; ...</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the PanTheria database</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pant <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&#39;data&#39;</span>, <span class="st">&#39;Pantheria.txt&#39;</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(pant)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    5416 obs. of  55 variables:
+##  $ MSW05_Order                  : chr  &quot;Artiodactyla&quot; &quot;Carnivora&quot; &quot;Carnivora&quot; &quot;Carnivora&quot; ...
+##  $ MSW05_Family                 : chr  &quot;Camelidae&quot; &quot;Canidae&quot; &quot;Canidae&quot; &quot;Canidae&quot; ...
+##  $ MSW05_Genus                  : chr  &quot;Camelus&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; ...
+##  $ MSW05_Species                : chr  &quot;dromedarius&quot; &quot;adustus&quot; &quot;aureus&quot; &quot;latrans&quot; ...
+##  $ MSW05_Binomial               : chr  &quot;Camelus dromedarius&quot; &quot;Canis adustus&quot; &quot;Canis aureus&quot; &quot;Canis latrans&quot; ...
+##  $ X1.1_ActivityCycle           : num  3 1 2 2 2 2 -999 2 3 -999 ...
+##  $ X5.1_AdultBodyMass_g         : num  492714 10392 9659 11989 31757 ...
+##  $ X8.1_AdultForearmLen_mm      : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X13.1_AdultHeadBodyLen_mm    : num  -999 745 828 872 1055 ...
+##  $ X2.1_AgeatEyeOpening_d       : num  -999 -999 7.5 11.9 14 ...
+##  $ X3.1_AgeatFirstBirth_d       : num  1652 -999 -999 365 548 ...
+##  $ X18.1_BasalMetRate_mLO2hr    : num  40293 -999 -999 3699 11254 ...
+##  $ X5.2_BasalMetRateMass_g      : num  407000 -999 -999 10450 33100 ...
+##  $ X6.1_DietBreadth             : num  3 6 6 1 1 3 2 2 -999 -999 ...
+##  $ X7.1_DispersalAge_d          : num  -999 330 -999 255 180 ...
+##  $ X9.1_GestationLen_d          : num  386.5 65 61.2 61.7 63.5 ...
+##  $ X12.1_HabitatBreadth         : num  1 1 1 1 1 -999 -999 1 1 -999 ...
+##  $ X22.1_HomeRange_km2          : num  196.32 1.01 2.95 18.88 159.86 ...
+##  $ X22.2_HomeRange_Indiv_km2    : num  -999 1.01 3.13 19.91 43.13 ...
+##  $ X14.1_InterbirthInterval_d   : num  614 -999 365 365 365 ...
+##  $ X15.1_LitterSize             : num  0.98 4.5 3.74 5.72 4.98 1.22 1 1.22 1.01 -999 ...
+##  $ X16.1_LittersPerYear         : num  1 -999 -999 -999 2 1 1 1 -999 -999 ...
+##  $ X17.1_MaxLongevity_m         : num  480 137 192 262 354 ...
+##  $ X5.3_NeonateBodyMass_g       : num  36751 -999 212 200 412 ...
+##  $ X13.2_NeonateHeadBodyLen_mm  : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X21.1_PopulationDensity_n.km2: num  0.98 0.74 0.22 0.25 0.01 0.54 -999 0.75 4.89 -999 ...
+##  $ X10.1_PopulationGrpSize      : num  11 -999 -999 -999 -999 -999 -999 21 -999 -999 ...
+##  $ X23.1_SexualMaturityAge_d    : num  1948 250 371 373 679 ...
+##  $ X10.2_SocialGrpSize          : num  10 -999 -999 -999 -999 40 110 40 2.05 -999 ...
+##  $ X24.1_TeatNumber             : int  -999 8 8 8 9 -999 -999 -999 -999 -999 ...
+##  $ X12.2_Terrestriality         : num  1 1 1 1 1 -999 -999 1 2 -999 ...
+##  $ X6.2_TrophicLevel            : int  1 2 2 3 3 1 1 1 -999 -999 ...
+##  $ X25.1_WeaningAge_d           : num  389.4 52.9 61.3 43.7 44.8 ...
+##  $ X5.4_WeaningBodyMass_g       : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X13.3_WeaningHeadBodyLen_mm  : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ References                   : chr  &quot;511;543;719;1274;1297;1594;1654;1822;1848;2655;3044&quot; &quot;542;543;730;1113;1297;1573;2655&quot; &quot;543;679;730;1113;1297;1573;2655&quot; &quot;367;542;543;730;1113;1297;1573;1822;2655&quot; ...
+##  $ X5.5_AdultBodyMass_g_EXT     : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X16.2_LittersPerYear_EXT     : num  -999 -999 1.1 1.1 -999 -999 -999 -999 1.05 -999 ...
+##  $ X5.6_NeonateBodyMass_g_EXT   : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X5.7_WeaningBodyMass_g_EXT   : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X26.1_GR_Area_km2            : num  -999 10581413 25739527 17099094 50803440 ...
+##  $ X26.2_GR_MaxLat_dd           : num  -999 16.7 47 71.4 83.3 ...
+##  $ X26.3_GR_MinLat_dd           : num  -999 -28.73 -4.71 8.02 11.48 ...
+##  $ X26.4_GR_MidRangeLat_dd      : num  -999 -6 21.1 39.7 47.4 ...
+##  $ X26.5_GR_MaxLong_dd          : num  -999 43.5 108.5 -67.1 179.7 ...
+##  $ X26.6_GR_MinLong_dd          : num  -999 -17.5 -17.1 -168.1 -171.8 ...
+##  $ X26.7_GR_MidRangeLong_dd     : num  -999 13 45.7 -117.6 3.9 ...
+##  $ X27.1_HuPopDen_Min_n.km2     : int  -999 0 0 0 0 1 0 1 0 -999 ...
+##  $ X27.2_HuPopDen_Mean_n.km2    : num  -999 35.2 79.3 27.3 37.9 ...
+##  $ X27.3_HuPopDen_5p_n.km2      : num  -999 1 0 0 0 8 0 4 0 -999 ...
+##  $ X27.4_HuPopDen_Change        : num  -999 0.14 0.1 0.06 0.04 0.09 0.05 0.11 0.05 -999 ...
+##  $ X28.1_Precip_Mean_mm         : num  -999 90.8 44.6 53 34.8 ...
+##  $ X28.2_Temp_Mean_01degC       : num  -999 236.51 217.23 58.18 4.82 ...
+##  $ X30.1_AET_Mean_mm            : num  -999 923 438 503 313 ...
+##  $ X30.2_PET_Mean_mm            : num  -999 1534 1359 728 561 ...</code></pre>
+<pre><code>## [1] 138</code></pre>
+</section>
+
+<section id="some-animals-in-the-dataset"
+class="title-slide slide level1">
+<h1>Some animals in the dataset</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Sri_Lankan_elephant_(Elephas_maximus_maximus)_female_and_young_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Elephas
+maximus
+</p>
+<p style="text-align:center;">
+<img src="img/Canis_aureus_syriacus_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Canis
+aureus
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src="img/Tupaia_glis_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Tupaia
+glis
+</p>
+<p style="text-align:center;">
+<img src="img/Bornean_Tarsier_(Cephalopachus_bancanus_borneanus)_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Tarsius
+bancanus
+</p>
+</div>
+</section>
+
+<section id="prepare-data-for-rda" class="title-slide slide level1">
+<h1>Prepare data for RDA</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(LH_noNA)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    25 obs. of  9 variables:
+##  $ bin          : chr  &quot;Axis porcinus&quot; &quot;Callosciurus erythraeus&quot; &quot;Callosciurus nigrovittatus&quot; &quot;Callosciurus notatus&quot; ...
+##  $ AdultBodyMass: num  37448 283 208 209 9659 ...
+##  $ LitterSize   : num  1 1.94 2.36 2.62 3.74 4.3 1.41 1.02 1.01 1.02 ...
+##  $ DietBreadth  : num  3 3 6 6 6 1 3 4 4 4 ...
+##  $ HomeRange    : num  0.52 0.00895 0.01 0.02 2.95 ...
+##  $ HuPopDen_Mean: num  144.4 206.2 153.7 153.2 79.3 ...
+##  $ Precip_Mean  : num  137 142.6 238.9 237.3 44.6 ...
+##  $ Temp_Mean    : num  214 189 248 249 217 ...
+##  $ AET_Mean     : num  980 1102 1667 1665 438 ...
+##  - attr(*, &quot;na.action&quot;)= &#39;omit&#39; Named int [1:113] 1 2 3 4 6 7 8 9 10 11 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:113] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>traits_SEas <span class="ot">&lt;-</span> LH_noNA <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">&#39;AdultBodyMass&#39;</span>,  <span class="st">&#39;LitterSize&#39;</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;DietBreadth&#39;</span>, <span class="st">&#39;HomeRange&#39;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>env_SEas <span class="ot">&lt;-</span> LH_noNA <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">&#39;HuPopDen_Mean&#39;</span>, <span class="st">&#39;Precip_Mean&#39;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;Temp_Mean&#39;</span>, <span class="st">&#39;AET_Mean&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_all</span>(<span class="fu">list</span>(<span class="at">z =</span> <span class="sc">~</span> <span class="fu">scale</span>(.))) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">ends_with</span>(<span class="st">&quot;_z&quot;</span>))</span></code></pre></div>
+<p>We standardize the explanatory variables prior to running RDA because
+these variables are in very different units.</p>
+</section>
+
+<section id="run-rda" class="title-slide slide level1">
+<h1>Run RDA</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rda_env <span class="ot">&lt;-</span> <span class="fu">rda</span>(traits_SEas <span class="sc">~</span> ., env_SEas, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Since our response variables (adult body mass, litter size, diet
+breadth and home range) are in very different units, we use option
+‘scale=’, so that all variables are now unitless and comparable. In
+other words, the PCA on the matrix of fitted values <span
+class="math inline">\(\widehat{Y}\)</span> will be run on correlation
+matrix.</p>
+</section>
+
+<section id="interpreting-rda" class="title-slide slide level1">
+<h1>Interpreting RDA</h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rda_env)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z +      Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE) 
+## 
+## Partitioning of correlations:
+##               Inertia Proportion
+## Total          4.0000     1.0000
+## Constrained    0.9185     0.2296
+## Unconstrained  3.0815     0.7704
+## 
+## Eigenvalues, and their contribution to the correlations 
+## 
+## Importance of components:
+##                         RDA1    RDA2     RDA3      RDA4    PC1    PC2    PC3
+## Eigenvalue            0.6807 0.21451 0.022722 0.0005228 1.6469 0.9144 0.4057
+## Proportion Explained  0.1702 0.05363 0.005681 0.0001307 0.4117 0.2286 0.1014
+## Cumulative Proportion 0.1702 0.22381 0.229491 0.2296221 0.6414 0.8700 0.9714
+##                           PC4
+## Eigenvalue            0.11442
+## Proportion Explained  0.02861
+## Cumulative Proportion 1.00000
+## 
+## Accumulated constrained eigenvalues
+## Importance of components:
+##                         RDA1   RDA2    RDA3      RDA4
+## Eigenvalue            0.6807 0.2145 0.02272 0.0005228
+## Proportion Explained  0.7411 0.2335 0.02474 0.0005692
+## Cumulative Proportion 0.7411 0.9747 0.99943 1.0000000
+## 
+## Scaling 2 for species and site scores
+## * Species are scaled proportional to eigenvalues
+## * Sites are unscaled: weighted dispersion equal on all dimensions
+## * General scaling constant of scores:  3.130169 
+## 
+## 
+## Species scores
+## 
+##                   RDA1     RDA2     RDA3      RDA4     PC1     PC2
+## AdultBodyMass -0.04291  0.09462  0.12395  0.030064  1.4374 -0.3285
+## LitterSize    -1.16847  0.12722 -0.08351  0.005666 -0.1917 -0.6573
+## DietBreadth   -0.03119  0.63319  0.07995 -0.012475 -0.5064 -1.2826
+## HomeRange     -0.54708 -0.31524  0.16409 -0.013748  1.2941 -0.2344
+## 
+## 
+## Site scores (weighted sums of species scores)
+## 
+##         RDA1     RDA2      RDA3    RDA4        PC1       PC2
+## 5    0.74584 -0.30225 -0.632835  -0.921 -0.0694600  0.878422
+## 12   0.16797 -0.07689 -2.181960   2.034 -0.1924597  0.510658
+## 14  -0.13057  2.09989 -0.266464 -13.144 -0.2888945 -0.956602
+## 15  -0.29565  2.15623 -0.616375 -12.114 -0.3085749 -1.030787
+## 17  -1.09927  2.23302 -1.263256 -10.353 -0.5243497 -0.563874
+## 30  -2.38015 -2.90899  2.659319 -11.858  0.5936678 -0.189898
+## 35  -0.84964 -1.52766 20.718051  77.708  2.8281175 -0.647915
+## 42   0.73416  0.40762 -0.034308  -7.254 -0.2412645 -0.266565
+## 44   0.73636  0.39777  0.015695  -7.439 -0.2857931  0.082342
+## 45   0.73193  0.40356 -0.013952  -7.324 -0.1339384 -0.304311
+## 46  -0.04280 -0.69488 -3.488100   9.052 -0.0511348  0.653988
+## 60   0.74906 -0.30784 -0.762471  -2.044  0.0007577  0.528303
+## 62   0.71220 -1.07502 -1.223320   2.384 -0.0094032  0.391903
+## 77   0.69528  0.33877  0.334797  -8.286 -0.1382990 -0.317948
+## 85  -0.53848 -2.50436  1.452589  -3.658  0.3371900  0.873443
+## 86  -0.85217  2.06266 -0.330526 -13.640 -0.0973959 -0.447057
+## 91   0.77507 -1.67522 -2.524065   9.655  0.1398596  0.751900
+## 92   0.76295 -1.69743 -2.415369   9.255  0.0367238  0.637630
+## 94  -0.22483 -1.45217 -4.056293  13.657 -0.0101760  1.105590
+## 116 -1.52921  1.83283 -3.401973   2.931 -0.6397062 -0.937897
+## 117  0.73301  0.40725 -0.008572  -7.105 -0.2865465 -0.281214
+## 120  0.76360 -0.28280 -0.906790  -1.734 -0.1323657  0.006695
+## 126 -0.02022  0.67939 -1.734184  -2.469 -0.1037321  0.005513
+## 133  0.42080 -0.18607 -1.046721   3.136 -0.3086910  0.328962
+## 137 -0.76525  1.67261  1.727082 -20.468 -0.1141315 -0.811281
+## 
+## 
+## Site constraints (linear combinations of constraining variables)
+## 
+##         RDA1     RDA2     RDA3      RDA4        PC1       PC2
+## 5   -0.36237  0.67839  0.05066  0.639657 -0.0694600  0.878422
+## 12  -0.51134  0.21656 -0.33877 -0.484325 -0.1924597  0.510658
+## 14   0.42395  0.30602 -0.37461 -0.353772 -0.2888945 -0.956602
+## 15   0.42327  0.28237 -0.31315 -0.414867 -0.3085749 -1.030787
+## 17  -0.71373  0.81240  1.72591  1.028620 -0.5243497 -0.563874
+## 30  -1.10638 -1.43478 -0.54149 -0.074063  0.5936678 -0.189898
+## 35  -0.01608  0.23412  0.22986  0.049198  2.8281175 -0.647915
+## 42   0.65269 -0.43019  0.56311 -0.908364 -0.2412645 -0.266565
+## 44   0.11395 -0.14007  0.74651 -0.139028 -0.2857931  0.082342
+## 45   0.71122 -0.29564 -0.46236  1.226065 -0.1339384 -0.304311
+## 46  -0.01516  0.49339 -0.12345 -0.003626 -0.0511348  0.653988
+## 60   0.29972  0.50559 -0.19375 -0.329591  0.0007577  0.528303
+## 62   0.63430 -0.35667  0.17777  0.002494 -0.0094032  0.391903
+## 77   0.75064 -0.33322  0.05261  0.715796 -0.1382990 -0.317948
+## 85  -0.45703 -0.12035  1.60021 -0.404932  0.3371900  0.873443
+## 86  -0.37435  1.55208 -0.59363  0.302124 -0.0973959 -0.447057
+## 91   0.72016 -0.09442 -0.70028  0.338572  0.1398596  0.751900
+## 92   0.73574 -0.45848 -0.06430  0.813290  0.0367238  0.637630
+## 94  -0.76126  0.25997 -0.67731 -0.166318 -0.0101760  1.105590
+## 116 -1.19797 -0.77793 -0.04609  0.221997 -0.6397062 -0.937897
+## 117  0.52489 -0.61589  0.61526 -1.034662 -0.2865465 -0.281214
+## 120  0.72688 -0.43518  0.05833  0.459007 -0.1323657  0.006695
+## 126  0.18785  0.71854 -0.30040 -1.554200 -0.1037321  0.005513
+## 133 -0.89925 -0.89724 -0.48739 -0.050439 -0.3086910  0.328962
+## 137 -0.49034  0.33063 -0.60325  0.121369 -0.1141315 -0.811281
+## 
+## 
+## Biplot scores for constraining variables
+## 
+##                    RDA1     RDA2    RDA3     RDA4 PC1 PC2
+## HuPopDen_Mean_z -0.5502  0.48823 -0.4199 -0.53159   0   0
+## Precip_Mean_z    0.9529 -0.05404 -0.2946 -0.04843   0   0
+## Temp_Mean_z      0.8742  0.44295  0.1918 -0.05340   0   0
+## AET_Mean_z       0.9487 -0.03942 -0.2499 -0.18974   0   0</code></pre>
+<div class="left-align">
+<p><strong>Partitioning of correlations (variance)</strong>: The total
+variance (correlation) is partitioned into constrained and unconstrained
+components. The Constrained variance is the part of the variance in
+matrix <span class="math inline">\(Y\)</span> that is explained by
+explanatory variables. When calculated as proportion it is equivalent to
+an unadjusted <span class="math inline">\(R^2\)</span> in multiple
+regression (we look at how to calculate adjusted one below).</p>
+</div>
+</section>
+
+<section id="interpreting-rda-1" class="title-slide slide level1">
+<h1>Interpreting RDA</h1>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rda_env)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z +      Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE) 
+## 
+## Partitioning of correlations:
+##               Inertia Proportion
+## Total          4.0000     1.0000
+## Constrained    0.9185     0.2296
+## Unconstrained  3.0815     0.7704
+## 
+## Eigenvalues, and their contribution to the correlations 
+## 
+## Importance of components:
+##                         RDA1    RDA2     RDA3      RDA4    PC1    PC2    PC3
+## Eigenvalue            0.6807 0.21451 0.022722 0.0005228 1.6469 0.9144 0.4057
+## Proportion Explained  0.1702 0.05363 0.005681 0.0001307 0.4117 0.2286 0.1014
+## Cumulative Proportion 0.1702 0.22381 0.229491 0.2296221 0.6414 0.8700 0.9714
+##                           PC4
+## Eigenvalue            0.11442
+## Proportion Explained  0.02861
+## Cumulative Proportion 1.00000
+## 
+## Accumulated constrained eigenvalues
+## Importance of components:
+##                         RDA1   RDA2    RDA3      RDA4
+## Eigenvalue            0.6807 0.2145 0.02272 0.0005228
+## Proportion Explained  0.7411 0.2335 0.02474 0.0005692
+## Cumulative Proportion 0.7411 0.9747 0.99943 1.0000000
+## 
+## Scaling 2 for species and site scores
+## * Species are scaled proportional to eigenvalues
+## * Sites are unscaled: weighted dispersion equal on all dimensions
+## * General scaling constant of scores:  3.130169 
+## 
+## 
+## Species scores
+## 
+##                   RDA1     RDA2     RDA3      RDA4     PC1     PC2
+## AdultBodyMass -0.04291  0.09462  0.12395  0.030064  1.4374 -0.3285
+## LitterSize    -1.16847  0.12722 -0.08351  0.005666 -0.1917 -0.6573
+## DietBreadth   -0.03119  0.63319  0.07995 -0.012475 -0.5064 -1.2826
+## HomeRange     -0.54708 -0.31524  0.16409 -0.013748  1.2941 -0.2344
+## 
+## 
+## Site scores (weighted sums of species scores)
+## 
+##         RDA1     RDA2      RDA3    RDA4        PC1       PC2
+## 5    0.74584 -0.30225 -0.632835  -0.921 -0.0694600  0.878422
+## 12   0.16797 -0.07689 -2.181960   2.034 -0.1924597  0.510658
+## 14  -0.13057  2.09989 -0.266464 -13.144 -0.2888945 -0.956602
+## 15  -0.29565  2.15623 -0.616375 -12.114 -0.3085749 -1.030787
+## 17  -1.09927  2.23302 -1.263256 -10.353 -0.5243497 -0.563874
+## 30  -2.38015 -2.90899  2.659319 -11.858  0.5936678 -0.189898
+## 35  -0.84964 -1.52766 20.718051  77.708  2.8281175 -0.647915
+## 42   0.73416  0.40762 -0.034308  -7.254 -0.2412645 -0.266565
+## 44   0.73636  0.39777  0.015695  -7.439 -0.2857931  0.082342
+## 45   0.73193  0.40356 -0.013952  -7.324 -0.1339384 -0.304311
+## 46  -0.04280 -0.69488 -3.488100   9.052 -0.0511348  0.653988
+## 60   0.74906 -0.30784 -0.762471  -2.044  0.0007577  0.528303
+## 62   0.71220 -1.07502 -1.223320   2.384 -0.0094032  0.391903
+## 77   0.69528  0.33877  0.334797  -8.286 -0.1382990 -0.317948
+## 85  -0.53848 -2.50436  1.452589  -3.658  0.3371900  0.873443
+## 86  -0.85217  2.06266 -0.330526 -13.640 -0.0973959 -0.447057
+## 91   0.77507 -1.67522 -2.524065   9.655  0.1398596  0.751900
+## 92   0.76295 -1.69743 -2.415369   9.255  0.0367238  0.637630
+## 94  -0.22483 -1.45217 -4.056293  13.657 -0.0101760  1.105590
+## 116 -1.52921  1.83283 -3.401973   2.931 -0.6397062 -0.937897
+## 117  0.73301  0.40725 -0.008572  -7.105 -0.2865465 -0.281214
+## 120  0.76360 -0.28280 -0.906790  -1.734 -0.1323657  0.006695
+## 126 -0.02022  0.67939 -1.734184  -2.469 -0.1037321  0.005513
+## 133  0.42080 -0.18607 -1.046721   3.136 -0.3086910  0.328962
+## 137 -0.76525  1.67261  1.727082 -20.468 -0.1141315 -0.811281
+## 
+## 
+## Site constraints (linear combinations of constraining variables)
+## 
+##         RDA1     RDA2     RDA3      RDA4        PC1       PC2
+## 5   -0.36237  0.67839  0.05066  0.639657 -0.0694600  0.878422
+## 12  -0.51134  0.21656 -0.33877 -0.484325 -0.1924597  0.510658
+## 14   0.42395  0.30602 -0.37461 -0.353772 -0.2888945 -0.956602
+## 15   0.42327  0.28237 -0.31315 -0.414867 -0.3085749 -1.030787
+## 17  -0.71373  0.81240  1.72591  1.028620 -0.5243497 -0.563874
+## 30  -1.10638 -1.43478 -0.54149 -0.074063  0.5936678 -0.189898
+## 35  -0.01608  0.23412  0.22986  0.049198  2.8281175 -0.647915
+## 42   0.65269 -0.43019  0.56311 -0.908364 -0.2412645 -0.266565
+## 44   0.11395 -0.14007  0.74651 -0.139028 -0.2857931  0.082342
+## 45   0.71122 -0.29564 -0.46236  1.226065 -0.1339384 -0.304311
+## 46  -0.01516  0.49339 -0.12345 -0.003626 -0.0511348  0.653988
+## 60   0.29972  0.50559 -0.19375 -0.329591  0.0007577  0.528303
+## 62   0.63430 -0.35667  0.17777  0.002494 -0.0094032  0.391903
+## 77   0.75064 -0.33322  0.05261  0.715796 -0.1382990 -0.317948
+## 85  -0.45703 -0.12035  1.60021 -0.404932  0.3371900  0.873443
+## 86  -0.37435  1.55208 -0.59363  0.302124 -0.0973959 -0.447057
+## 91   0.72016 -0.09442 -0.70028  0.338572  0.1398596  0.751900
+## 92   0.73574 -0.45848 -0.06430  0.813290  0.0367238  0.637630
+## 94  -0.76126  0.25997 -0.67731 -0.166318 -0.0101760  1.105590
+## 116 -1.19797 -0.77793 -0.04609  0.221997 -0.6397062 -0.937897
+## 117  0.52489 -0.61589  0.61526 -1.034662 -0.2865465 -0.281214
+## 120  0.72688 -0.43518  0.05833  0.459007 -0.1323657  0.006695
+## 126  0.18785  0.71854 -0.30040 -1.554200 -0.1037321  0.005513
+## 133 -0.89925 -0.89724 -0.48739 -0.050439 -0.3086910  0.328962
+## 137 -0.49034  0.33063 -0.60325  0.121369 -0.1141315 -0.811281
+## 
+## 
+## Biplot scores for constraining variables
+## 
+##                    RDA1     RDA2    RDA3     RDA4 PC1 PC2
+## HuPopDen_Mean_z -0.5502  0.48823 -0.4199 -0.53159   0   0
+## Precip_Mean_z    0.9529 -0.05404 -0.2946 -0.04843   0   0
+## Temp_Mean_z      0.8742  0.44295  0.1918 -0.05340   0   0
+## AET_Mean_z       0.9487 -0.03942 -0.2499 -0.18974   0   0</code></pre>
+<div class="left-align">
+<p style="font-size: 80%;">
+<strong>Importance of components</strong>: Shows eigenvalues and the
+proportion they explain for 4 canonical axes (RDA1 - RDA4) and four
+unconstrained axes for residuals (PC1-PC4). There are 4 in each case
+because in our example the number of response variables (<span
+class="math inline">\(p\)</span>) is the same as the number of
+explanatory variables (<span class="math inline">\(m\)</span>) and is 4.
+The canonical axes (RDAs) measure the amount of variation in <span
+class="math inline">\(Y\)</span> explained by <span
+class="math inline">\(X\)</span> whereas the unconstrained residual
+eigenvalues (PCs) measure the variance represented by residual axes.
+</p>
+</div>
+</section>
+
+<section id="interpreting-rda-2" class="title-slide slide level1">
+<h1>Interpreting RDA</h1>
+<pre><code>## 
+## Call:
+## rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z +      Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE) 
+## 
+## Partitioning of correlations:
+##               Inertia Proportion
+## Total          4.0000     1.0000
+## Constrained    0.9185     0.2296
+## Unconstrained  3.0815     0.7704
+## 
+## Eigenvalues, and their contribution to the correlations 
+## 
+## Importance of components:
+##                         RDA1    RDA2     RDA3      RDA4    PC1    PC2    PC3
+## Eigenvalue            0.6807 0.21451 0.022722 0.0005228 1.6469 0.9144 0.4057
+## Proportion Explained  0.1702 0.05363 0.005681 0.0001307 0.4117 0.2286 0.1014
+## Cumulative Proportion 0.1702 0.22381 0.229491 0.2296221 0.6414 0.8700 0.9714
+##                           PC4
+## Eigenvalue            0.11442
+## Proportion Explained  0.02861
+## Cumulative Proportion 1.00000
+## 
+## Accumulated constrained eigenvalues
+## Importance of components:
+##                         RDA1   RDA2    RDA3      RDA4
+## Eigenvalue            0.6807 0.2145 0.02272 0.0005228
+## Proportion Explained  0.7411 0.2335 0.02474 0.0005692
+## Cumulative Proportion 0.7411 0.9747 0.99943 1.0000000
+## 
+## Scaling 2 for species and site scores
+## * Species are scaled proportional to eigenvalues
+## * Sites are unscaled: weighted dispersion equal on all dimensions
+## * General scaling constant of scores:  3.130169 
+## 
+## 
+## Species scores
+## 
+##                   RDA1     RDA2     RDA3      RDA4     PC1     PC2
+## AdultBodyMass -0.04291  0.09462  0.12395  0.030064  1.4374 -0.3285
+## LitterSize    -1.16847  0.12722 -0.08351  0.005666 -0.1917 -0.6573
+## DietBreadth   -0.03119  0.63319  0.07995 -0.012475 -0.5064 -1.2826
+## HomeRange     -0.54708 -0.31524  0.16409 -0.013748  1.2941 -0.2344
+## 
+## 
+## Site scores (weighted sums of species scores)
+## 
+##         RDA1     RDA2      RDA3    RDA4        PC1       PC2
+## 5    0.74584 -0.30225 -0.632835  -0.921 -0.0694600  0.878422
+## 12   0.16797 -0.07689 -2.181960   2.034 -0.1924597  0.510658
+## 14  -0.13057  2.09989 -0.266464 -13.144 -0.2888945 -0.956602
+## 15  -0.29565  2.15623 -0.616375 -12.114 -0.3085749 -1.030787
+## 17  -1.09927  2.23302 -1.263256 -10.353 -0.5243497 -0.563874
+## 30  -2.38015 -2.90899  2.659319 -11.858  0.5936678 -0.189898
+## 35  -0.84964 -1.52766 20.718051  77.708  2.8281175 -0.647915
+## 42   0.73416  0.40762 -0.034308  -7.254 -0.2412645 -0.266565
+## 44   0.73636  0.39777  0.015695  -7.439 -0.2857931  0.082342
+## 45   0.73193  0.40356 -0.013952  -7.324 -0.1339384 -0.304311
+## 46  -0.04280 -0.69488 -3.488100   9.052 -0.0511348  0.653988
+## 60   0.74906 -0.30784 -0.762471  -2.044  0.0007577  0.528303
+## 62   0.71220 -1.07502 -1.223320   2.384 -0.0094032  0.391903
+## 77   0.69528  0.33877  0.334797  -8.286 -0.1382990 -0.317948
+## 85  -0.53848 -2.50436  1.452589  -3.658  0.3371900  0.873443
+## 86  -0.85217  2.06266 -0.330526 -13.640 -0.0973959 -0.447057
+## 91   0.77507 -1.67522 -2.524065   9.655  0.1398596  0.751900
+## 92   0.76295 -1.69743 -2.415369   9.255  0.0367238  0.637630
+## 94  -0.22483 -1.45217 -4.056293  13.657 -0.0101760  1.105590
+## 116 -1.52921  1.83283 -3.401973   2.931 -0.6397062 -0.937897
+## 117  0.73301  0.40725 -0.008572  -7.105 -0.2865465 -0.281214
+## 120  0.76360 -0.28280 -0.906790  -1.734 -0.1323657  0.006695
+## 126 -0.02022  0.67939 -1.734184  -2.469 -0.1037321  0.005513
+## 133  0.42080 -0.18607 -1.046721   3.136 -0.3086910  0.328962
+## 137 -0.76525  1.67261  1.727082 -20.468 -0.1141315 -0.811281
+## 
+## 
+## Site constraints (linear combinations of constraining variables)
+## 
+##         RDA1     RDA2     RDA3      RDA4        PC1       PC2
+## 5   -0.36237  0.67839  0.05066  0.639657 -0.0694600  0.878422
+## 12  -0.51134  0.21656 -0.33877 -0.484325 -0.1924597  0.510658
+## 14   0.42395  0.30602 -0.37461 -0.353772 -0.2888945 -0.956602
+## 15   0.42327  0.28237 -0.31315 -0.414867 -0.3085749 -1.030787
+## 17  -0.71373  0.81240  1.72591  1.028620 -0.5243497 -0.563874
+## 30  -1.10638 -1.43478 -0.54149 -0.074063  0.5936678 -0.189898
+## 35  -0.01608  0.23412  0.22986  0.049198  2.8281175 -0.647915
+## 42   0.65269 -0.43019  0.56311 -0.908364 -0.2412645 -0.266565
+## 44   0.11395 -0.14007  0.74651 -0.139028 -0.2857931  0.082342
+## 45   0.71122 -0.29564 -0.46236  1.226065 -0.1339384 -0.304311
+## 46  -0.01516  0.49339 -0.12345 -0.003626 -0.0511348  0.653988
+## 60   0.29972  0.50559 -0.19375 -0.329591  0.0007577  0.528303
+## 62   0.63430 -0.35667  0.17777  0.002494 -0.0094032  0.391903
+## 77   0.75064 -0.33322  0.05261  0.715796 -0.1382990 -0.317948
+## 85  -0.45703 -0.12035  1.60021 -0.404932  0.3371900  0.873443
+## 86  -0.37435  1.55208 -0.59363  0.302124 -0.0973959 -0.447057
+## 91   0.72016 -0.09442 -0.70028  0.338572  0.1398596  0.751900
+## 92   0.73574 -0.45848 -0.06430  0.813290  0.0367238  0.637630
+## 94  -0.76126  0.25997 -0.67731 -0.166318 -0.0101760  1.105590
+## 116 -1.19797 -0.77793 -0.04609  0.221997 -0.6397062 -0.937897
+## 117  0.52489 -0.61589  0.61526 -1.034662 -0.2865465 -0.281214
+## 120  0.72688 -0.43518  0.05833  0.459007 -0.1323657  0.006695
+## 126  0.18785  0.71854 -0.30040 -1.554200 -0.1037321  0.005513
+## 133 -0.89925 -0.89724 -0.48739 -0.050439 -0.3086910  0.328962
+## 137 -0.49034  0.33063 -0.60325  0.121369 -0.1141315 -0.811281
+## 
+## 
+## Biplot scores for constraining variables
+## 
+##                    RDA1     RDA2    RDA3     RDA4 PC1 PC2
+## HuPopDen_Mean_z -0.5502  0.48823 -0.4199 -0.53159   0   0
+## Precip_Mean_z    0.9529 -0.05404 -0.2946 -0.04843   0   0
+## Temp_Mean_z      0.8742  0.44295  0.1918 -0.05340   0   0
+## AET_Mean_z       0.9487 -0.03942 -0.2499 -0.18974   0   0</code></pre>
+<div class="left-align">
+<p style="font-size: 80%;">
+<strong>Species scores</strong>: Coordinates of the tips of vectors
+corresponding to response variables.<br />
+<strong>Site scores</strong>: Coordinates of the sites in the space of
+the species in matrix <span class="math inline">\(Y\)</span>.<br />
+<strong>Site constraints</strong>: Coordinates of the sites in the space
+of the explanatory variables <span class="math inline">\(X\)</span>.
+These are fitted values for the site scores.<br />
+<strong>Biplot scores for constraining variables</strong>: coordinates
+of the tips of vectors corresponding to explanatory variables.<br />
+<strong>Centroids for factor constraints</strong>: coordinates of
+centroids for each level of the factor variables (our example did not
+include factors so we do not have this in the output).
+</p>
+</div>
+</section>
+
+<section id="adjusted-r2" class="title-slide slide level1">
+<h1>Adjusted <span class="math inline">\(R^2\)</span></h1>
+<p>The proportion of variance in <span class="math inline">\(Y\)</span>
+that is explained by <span class="math inline">\(X\)</span> is biased
+like the unadjusted <span class="math inline">\(R^2\)</span> in multiple
+regression.<br />
+The more variables in <span class="math inline">\(X\)</span>, the higher
+will be the variance explained.<br />
+To deal with this the adjusted <span class="math inline">\(R^2\)</span>
+was developed, based on Ezekiel’s formula (Ezekiel 1930):<br />
+<span class="math display">\[R^2{_{adj}}= 1-  \frac{n -1}{n - m - 1}
+\times (1 - R^2)\]</span> where <span class="math inline">\(n\)</span>
+is the number of sites, and <span class="math inline">\(m\)</span> is
+the number of degrees of freedom in the model.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">RsquareAdj</span>(rda_env)</span></code></pre></div>
+<pre><code>## $r.squared
+## [1] 0.2296221
+## 
+## $adj.r.squared
+## [1] 0.07554653</code></pre>
+<p><span style="color:blue"> What does this mean?</span></p>
+</section>
+
+<section id="scaling-1-and-scaling-2" class="title-slide slide level1">
+<h1>Scaling 1 and Scaling 2</h1>
+<ul>
+<li class="fragment"><strong>Scaling 1</strong>: distance biplot. The
+positions of objects can be approximated by projecting them at right
+angle on response variables or on quantitative explanatory variables.
+The angles between response and explanatory variables represent their
+correlations (<span style="color:orange">but not among response
+variables</span>). <strong>Distances among objects and between centroids
+and objects approximate their Euclidean distances.</strong><br />
+</li>
+<li class="fragment"><strong>Scaling 2</strong>: correlation biplot. The
+positions of objects can be approximated by projecting them at right
+angle on response variables or on quantitative explanatory variables.
+<strong>The angles between response and explanatory variables, as well
+as among explanatory variables and among response variables represent
+their correlations.</strong> Distances among centroids and between
+centroids and objects do not approximate their Euclidean distances.</li>
+</ul>
+</section>
+
+<section id="visualize-rda-results" class="title-slide slide level1">
+<h1>Visualize RDA results</h1>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rda_env, <span class="at">scaling =</span> <span class="dv">1</span>, <span class="at">main =</span><span class="st">&#39;Scaling 1&#39;</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rda_env, <span class="at">scaling =</span> <span class="dv">2</span>, <span class="at">main =</span> <span class="st">&#39;Scaling 2&#39;</span>)</span></code></pre></div>
+<p><img src="02_Lecture_RDA_files/figure-revealjs/plot%20RDA-1.png" width="80%" height="80%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="make-your-plot-nicer" class="title-slide slide level1">
+<h1>Make your plot nicer</h1>
+<p><img src="02_Lecture_RDA_files/figure-revealjs/custom-plotRDA-1.png" width="70%" height="70%" style="display: block; margin: auto;" />
+Controversy around whether to plot sites (samples) and descriptors (our
+explanatory variables) together.</p>
+</section>
+
+<section id="significance-testing" class="title-slide slide level1">
+<h1>Significance testing</h1>
+<p>Permutation tests are used to asses the significance of the whole
+model and of each axis.<br />
+The permutable units can be either rows of the <span
+class="math inline">\(Y\)</span> matrix or rows of <span
+class="math inline">\(X\)</span> matrix. Often response data are being
+permuted.<br />
+Null model: no linear relation between the response variables in <span
+class="math inline">\(Y\)</span> and explanatory variables <span
+class="math inline">\(X\)</span>.<br />
+We compute a so-called ‘pseudo- F statistics’ as the ratio of sum of
+squares of fitted values (explained variation) to the residual sum of
+squares.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova.cca</span>(rda_env, <span class="at">step =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<pre><code>## Permutation test for rda under reduced model
+## Permutation: free
+## Number of permutations: 999
+## 
+## Model: rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z + Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE)
+##          Df Variance      F Pr(&gt;F)
+## Model     4  0.91849 1.4903  0.148
+## Residual 20  3.08151</code></pre>
+</section>
+
+<section id="significance-per-axis-term"
+class="title-slide slide level1">
+<h1>Significance per axis term</h1>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova.cca</span>(rda_env, <span class="at">by =</span><span class="st">&#39;axis&#39;</span>, <span class="at">step =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<pre><code>## Permutation test for rda under reduced model
+## Forward tests for axes
+## Permutation: free
+## Number of permutations: 999
+## 
+## Model: rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z + Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE)
+##          Df Variance      F Pr(&gt;F)
+## RDA1      1  0.68073 4.4182  0.137
+## RDA2      1  0.21451 1.3923  0.694
+## RDA3      1  0.02272 0.1475  0.997
+## RDA4      1  0.00052 0.0034  1.000
+## Residual 20  3.08151</code></pre>
+</section>
+
+<section id="significance-per-model-term"
+class="title-slide slide level1">
+<h1>Significance per model term</h1>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova.cca</span>(rda_env, <span class="at">by =</span> <span class="st">&#39;margin&#39;</span>, <span class="at">step =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<pre><code>## Permutation test for rda under reduced model
+## Marginal effects of terms
+## Permutation: free
+## Number of permutations: 999
+## 
+## Model: rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z + Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE)
+##                 Df Variance      F Pr(&gt;F)
+## HuPopDen_Mean_z  1  0.12998 0.8436  0.479
+## Precip_Mean_z    1  0.03044 0.1976  0.900
+## Temp_Mean_z      1  0.18413 1.1950  0.297
+## AET_Mean_z       1  0.04541 0.2948  0.836
+## Residual        20  3.08151</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova.cca</span>(rda_env, <span class="at">by =</span> <span class="st">&#39;term&#39;</span>, <span class="at">step =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<pre><code>## Permutation test for rda under reduced model
+## Terms added sequentially (first to last)
+## Permutation: free
+## Number of permutations: 999
+## 
+## Model: rda(formula = traits_SEas ~ HuPopDen_Mean_z + Precip_Mean_z + Temp_Mean_z + AET_Mean_z, data = env_SEas, scale = TRUE)
+##                 Df Variance      F Pr(&gt;F)  
+## HuPopDen_Mean_z  1  0.26138 1.6964  0.171  
+## Precip_Mean_z    1  0.44584 2.8936  0.051 .
+## Temp_Mean_z      1  0.16586 1.0765  0.351  
+## AET_Mean_z       1  0.04541 0.2948  0.824  
+## Residual        20  3.08151                
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+
+<section id="collinearity" class="title-slide slide level1">
+<h1>Collinearity</h1>
+<p>Variance Inflation Factors (VIF) can be used to assess collinearity.
+VIFs measure the proportion by which the variance of the regression
+coefficient is inflated in the presence of other explanatory variables.
+Values &gt; 20 mean strong collinearity.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vif.cca</span>(rda_env)</span></code></pre></div>
+<pre><code>## HuPopDen_Mean_z   Precip_Mean_z     Temp_Mean_z      AET_Mean_z 
+##        1.542435       62.185426        2.604444       63.591145</code></pre>
+</section>
+
+<section id="variation-partitioning" class="title-slide slide level1">
+<h1>Variation partitioning</h1>
+<p>Often the explanatory variables can be grouped into sets.<br />
+<strong>Traits</strong>: life history traits, physiological traits,
+behavioural traits<br />
+<strong>Environment</strong>: biotic variables and abiotic variables;
+anthropogenic variables and nature-like variables; climatic variables
+and habitat variables</p>
+</section>
+
+<section id="variation-partitioning-1" class="title-slide slide level1">
+<h1>Variation partitioning</h1>
+<p>Let us have two matrices of explanatory variables: <span
+class="math inline">\(X1\)</span> and <span
+class="math inline">\(X2\)</span> and a matrix of response variables
+<span class="math inline">\(Y\)</span>.<br />
+<img src="02_Lecture_RDA_files/figure-revealjs/varPart-1.png" width="50%" height="50%" style="display: block; margin: auto;" />
+Part of the variation in <span class="math inline">\(Y\)</span> matrix
+is explained by <span class="math inline">\(X1\)</span> (fraction <span
+class="math inline">\(a+c\)</span>), a part is explained by <span
+class="math inline">\(X2\)</span> (fraction <span
+class="math inline">\(b+c\)</span>) and a part is unexplained variation
+(fraction <span class="math inline">\(d\)</span>). Since variables in
+both sets are rarely fully independent, we have a proportion of
+variation that is explained by both datasets jointly (fraction <span
+class="math inline">\(c\)</span>).</p>
+</section>
+
+<section id="how-variation-partitioning-works"
+class="title-slide slide level1">
+<h1>How variation partitioning works</h1>
+<ul>
+<li class="fragment">Run RDA with <span
+class="math inline">\(X1\)</span> as explanatory variables (we obtain
+fraction <span class="math inline">\(a+c\)</span>);</li>
+<li class="fragment">Run RDA with <span
+class="math inline">\(X2\)</span> as explanatory variables (we obtain
+fraction <span class="math inline">\(b+c\)</span>);</li>
+<li class="fragment">Run RDA with both <span
+class="math inline">\(X1\)</span> and <span
+class="math inline">\(X2\)</span> as explanatory variables (we obtain
+fraction <span class="math inline">\(a+b+c\)</span>);</li>
+<li class="fragment">Compute adjusted <span
+class="math inline">\(R^2\)</span> of these RDAs;</li>
+<li class="fragment">Allows estimating the adjusted <span
+class="math inline">\(R^2\)</span> for each fraction. This all is done
+with function <code>varpart()</code> in vegan package.</li>
+</ul>
+</section>
+
+<section id="application-of-varpart" class="title-slide slide level1">
+<h1>Application of varpart</h1>
+<p>We use the plant community data and assess how it is affected by
+chemical composition of the soil (e.g. N, P, K, Al etc) and by physical
+soil properties (i.e. cover of bare soil and depth of the humus
+layer)</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(varespec); <span class="fu">data</span>(varechem)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(varespec)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    24 obs. of  44 variables:
+##  $ Callvulg: num  0.55 0.67 0.1 0 0 ...
+##  $ Empenigr: num  11.13 0.17 1.55 15.13 12.68 ...
+##  $ Rhodtome: num  0 0 0 2.42 0 0 1.55 0 0.35 0.07 ...
+##  $ Vaccmyrt: num  0 0.35 0 5.92 0 ...
+##  $ Vaccviti: num  17.8 12.1 13.5 16 23.7 ...
+##  $ Pinusylv: num  0.07 0.12 0.25 0 0.03 0.12 0.1 0.1 0.05 0.12 ...
+##  $ Descflex: num  0 0 0 3.7 0 0.02 0.78 0 0.4 0 ...
+##  $ Betupube: num  0 0 0 0 0 0 0.02 0 0 0 ...
+##  $ Vacculig: num  1.6 0 0 1.12 0 0 2 0 0.2 0 ...
+##  $ Diphcomp: num  2.07 0 0 0 0 0 0 0 0 0.07 ...
+##  $ Dicrsp  : num  0 0.33 23.43 0 0 ...
+##  $ Dicrfusc: num  1.62 10.92 0 3.63 3.42 ...
+##  $ Dicrpoly: num  0 0.02 1.68 0 0.02 0.02 0 0.23 0.2 0 ...
+##  $ Hylosple: num  0 0 0 6.7 0 0 0 0 9.97 0 ...
+##  $ Pleuschr: num  4.67 37.75 32.92 58.07 19.42 ...
+##  $ Polypili: num  0.02 0.02 0 0 0.02 0.02 0 0 0 0 ...
+##  $ Polyjuni: num  0.13 0.23 0.23 0 2.12 1.58 0 0.02 0.08 0.02 ...
+##  $ Polycomm: num  0 0 0 0.13 0 0.18 0 0 0 0 ...
+##  $ Pohlnuta: num  0.13 0.03 0.32 0.02 0.17 0.07 0.1 0.13 0.07 0.03 ...
+##  $ Ptilcili: num  0.12 0.02 0.03 0.08 1.8 0.27 0.03 0.1 0.03 0.25 ...
+##  $ Barbhatc: num  0 0 0 0.08 0.02 0.02 0 0 0 0.07 ...
+##  $ Cladarbu: num  21.73 12.05 3.58 1.42 9.08 ...
+##  $ Cladrang: num  21.47 8.13 5.52 7.63 9.22 ...
+##  $ Cladstel: num  3.5 0.18 0.07 2.55 0.05 ...
+##  $ Cladunci: num  0.3 2.65 8.93 0.15 0.73 0.25 2.38 0.82 0.05 0.95 ...
+##  $ Cladcocc: num  0.18 0.13 0 0 0.08 0.1 0.17 0.15 0.02 0.17 ...
+##  $ Cladcorn: num  0.23 0.18 0.2 0.38 1.42 0.25 0.13 0.05 0.03 0.05 ...
+##  $ Cladgrac: num  0.25 0.23 0.48 0.12 0.5 0.18 0.18 0.22 0.07 0.23 ...
+##  $ Cladfimb: num  0.25 0.25 0 0.1 0.17 0.1 0.2 0.22 0.1 0.18 ...
+##  $ Cladcris: num  0.23 1.23 0.07 0.03 1.78 0.12 0.2 0.17 0.02 0.57 ...
+##  $ Cladchlo: num  0 0 0.1 0 0.05 0.05 0.02 0 0 0.02 ...
+##  $ Cladbotr: num  0 0 0.02 0.02 0.05 0.02 0 0 0.02 0.07 ...
+##  $ Cladamau: num  0.08 0 0 0 0 0 0 0 0 0 ...
+##  $ Cladsp  : num  0.02 0 0 0.02 0 0 0.02 0.02 0 0.07 ...
+##  $ Cetreric: num  0.02 0.15 0.78 0 0 0 0.02 0.18 0 0.18 ...
+##  $ Cetrisla: num  0 0.03 0.12 0 0 0 0 0.08 0.02 0.02 ...
+##  $ Flavniva: num  0.12 0 0 0 0.02 0.02 0 0 0 0 ...
+##  $ Nepharct: num  0.02 0 0 0 0 0 0 0 0 0 ...
+##  $ Stersp  : num  0.62 0.85 0.03 0 1.58 0.28 0 0.03 0.02 0.03 ...
+##  $ Peltapht: num  0.02 0 0 0.07 0.33 0 0 0 0 0.02 ...
+##  $ Icmaeric: num  0 0 0 0 0 0 0 0.07 0 0 ...
+##  $ Cladcerv: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Claddefo: num  0.25 1 0.33 0.15 1.97 0.37 0.15 0.67 0.08 0.47 ...
+##  $ Cladphyl: num  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+</section>
+
+<section id="explanatory-data" class="title-slide slide level1">
+<h1>Explanatory data</h1>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(varechem)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    24 obs. of  14 variables:
+##  $ N       : num  19.8 13.4 20.2 20.6 23.8 22.8 26.6 24.2 29.8 28.1 ...
+##  $ P       : num  42.1 39.1 67.7 60.8 54.5 40.9 36.7 31 73.5 40.5 ...
+##  $ K       : num  140 167 207 234 181 ...
+##  $ Ca      : num  519 357 973 834 777 ...
+##  $ Mg      : num  90 70.7 209.1 127.2 125.8 ...
+##  $ S       : num  32.3 35.2 58.1 40.7 39.5 40.8 33.8 27.1 42.5 60.2 ...
+##  $ Al      : num  39 88.1 138 15.4 24.2 ...
+##  $ Fe      : num  40.9 39 35.4 4.4 3 ...
+##  $ Mn      : num  58.1 52.4 32.1 132 50.1 ...
+##  $ Zn      : num  4.5 5.4 16.8 10.7 6.6 9.1 7.4 5.2 9.3 9.1 ...
+##  $ Mo      : num  0.3 0.3 0.8 0.2 0.3 0.4 0.3 0.3 0.3 0.5 ...
+##  $ Baresoil: num  43.9 23.6 21.2 18.7 46 40.5 23 29.8 17.6 29.9 ...
+##  $ Humdepth: num  2.2 2.2 2 2.9 3 3.8 2.8 2 3 2.2 ...
+##  $ pH      : num  2.7 2.8 3 2.8 2.7 2.7 2.8 2.8 2.8 2.8 ...</code></pre>
+</section>
+
+<section id="variation-partitioning-of-plant-community-data"
+class="title-slide slide level1">
+<h1>Variation partitioning of plant community data</h1>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>part.veg <span class="ot">&lt;-</span> <span class="fu">varpart</span>(varespec, <span class="sc">~</span> N <span class="sc">+</span> P <span class="sc">+</span> K <span class="sc">+</span> Ca <span class="sc">+</span> Mg <span class="sc">+</span> S <span class="sc">+</span> Al <span class="sc">+</span> Fe <span class="sc">+</span> Mn <span class="sc">+</span> Mo <span class="sc">+</span> pH, <span class="sc">~</span>Baresoil <span class="sc">+</span> Humdepth, <span class="at">data =</span> varechem)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>part.veg</span></code></pre></div>
+<pre><code>## 
+## Partition of variance in RDA 
+## 
+## Call: varpart(Y = varespec, X = ~N + P + K + Ca + Mg + S + Al + Fe + Mn
+## + Mo + pH, ~Baresoil + Humdepth, data = varechem)
+## 
+## Explanatory tables:
+## X1:  ~N + P + K + Ca + Mg + S + Al + Fe + Mn + Mo + pH
+## X2:  ~Baresoil + Humdepth 
+## 
+## No. of explanatory tables: 2 
+## Total variation (SS): 41990 
+##             Variance: 1825.7 
+## No. of observations: 24 
+## 
+## Partition table:
+##                      Df R.squared Adj.R.squared Testable
+## [a+c] = X1           11   0.66008       0.34848     TRUE
+## [b+c] = X2            2   0.29874       0.23195     TRUE
+## [a+b+c] = X1+X2      13   0.78769       0.51169     TRUE
+## Individual fractions                                    
+## [a] = X1|X2          11                 0.27973     TRUE
+## [b] = X2|X1           2                 0.16320     TRUE
+## [c]                   0                 0.06875    FALSE
+## [d] = Residuals                         0.48831    FALSE
+## ---
+## Use function &#39;rda&#39; to test significance of fractions of interest</code></pre>
+</section>
+
+<section id="visualize-variation-partitioning"
+class="title-slide slide level1">
+<h1>Visualize variation partitioning</h1>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(part.veg)</span></code></pre></div>
+<p><img src="02_Lecture_RDA_files/figure-revealjs/varPart%20varespec%20plot-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="questions" class="title-slide slide level1">
+<h1>Questions?</h1>
+
+</section>
+
+<section id="check-up" class="title-slide slide level1">
+<h1>Check-up</h1>
+<ul>
+<li class="fragment">What types of variables can be used as explanatory
+variables in RDA?<br />
+</li>
+<li class="fragment">What types of variables are allowed as response
+variables in RDA?<br />
+</li>
+<li class="fragment">Can RDA be applied if variables in response matrix
+and in explanatory matrix are non-linearly related?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="02_Lecture_RDA_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="02_Lecture_RDA_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
