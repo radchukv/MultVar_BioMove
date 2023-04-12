@@ -1,0 +1,21 @@
+---
+title: "Practical session: RDA"
+author: "Radchuk Viktoriia"
+date: "2022-03-18"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+In the RDA we performed during the lecture to assess how life history traits of Southeast-asian mammals are affected by environmental variables we saw that VIFs are very high for two environmental variables: precipitation and actual evapotransporation. Exclude one of these variables and re-run RDA.    
+
+- How did the results change?     
+- Did the proportion of variation explained by $X$ increase?    
+- Is the association between environmental variables and life history traits significant?    
+- Partition the amount of variation explained by climatic variables (precipitation and temperature) vs the variation explained by anthropogenic factor, i.e. human population density).   
+
