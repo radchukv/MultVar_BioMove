@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Radchuk Viktoriia" />
+  <meta name="dcterms.date" content="2023-03-16" />
+  <title>Principal Component Analysis</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="01b_Lecture_PCA_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="01b_Lecture_PCA_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="../css/default.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="01b_Lecture_PCA_files/header-attrs-2.20/header-attrs.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Principal Component Analysis</h1>
+    <h2 class="author">Radchuk Viktoriia</h2>
+    <h3 class="date">2023-03-16</h3>
+</section>
+
+<section id="what-is-pca" class="title-slide slide level1">
+<h1>What is PCA</h1>
+<ul>
+<li>An eigenvector-based method for dimensionality reduction.<br />
+</li>
+<li>Works on raw, quantitative data (are expected to have multivariate
+normal distribution).<br />
+</li>
+<li>It preserves Euclidian distances among sites (also known as objects
+/ samples).<br />
+</li>
+<li>It is unconstrained ordination method, i.e. an explorative tool
+(used for descriptive analysis), not a statistical test.</li>
+</ul>
+</section>
+
+<section id="main-requirements-assumptions"
+class="title-slide slide level1">
+<h1>Main requirements / assumptions</h1>
+<ul>
+<li>Linear relations among variables;<br />
+</li>
+<li>Requires quantitative data (values can also be negative);<br />
+</li>
+<li>Requires data in same units for all variables. Otherwise, the data
+has to be standardised;<br />
+</li>
+<li>Not suitable for data sets where responses are unimodal, rather than
+linear. This is often the case with compositional data, where relation
+with environmental gradient cannot be approximated by linear relation
+(i.e. data with many zeros).</li>
+</ul>
+</section>
+
+<section id="how-it-works-very-simplified"
+class="title-slide slide level1">
+<h1>How it works: very simplified</h1>
+<p><strong>Objects</strong>: sites, individuals, samples<br />
+<strong>Variables</strong>: (for sites) temperature, precipitation,
+human population density….<br />
+Let us have <span class="math inline">\(n\)</span> objects and <span
+class="math inline">\(p\)</span> variables. Each variable can be thought
+of as a dimension, since we can look at how samples are located along
+that variable. So, these <span class="math inline">\(n\)</span> objects
+can be represented in the <span
+class="math inline">\(p\)</span>-dimensional space.</p>
+</section>
+
+<section id="multidimensional-space" class="title-slide slide level1">
+<h1>Multidimensional space</h1>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/simple_PCA-1.png" width="50%" height="50%" style="display: block; margin: auto;" />
+The method finds the direction with the largest variance in the data
+(this direction is not necessarily aligned with the one of the
+dimensions, i.e. variables in the data). The direction along which most
+of the data variance is observed will be extracted as the first axis,
+also know as the first Principal Component (PC1).</p>
+</section>
+
+<section id="proceeds-to-determine-all-the-principal-components"
+class="title-slide slide level1">
+<h1>Proceeds to determine all the principal components</h1>
+<p>It then extracts the next axis, which is the second most important in
+variance, given that it is orthogonal (i.e. linearly independent) to the
+first one. It then goes on like that and extracts all <span
+class="math inline">\(p\)</span> axes (in the decreasing order of
+variance observed in the data).</p>
+</section>
+
+<section id="rotates-original-coordination-system"
+class="title-slide slide level1">
+<h1>Rotates original coordination system</h1>
+<p style="text-align:center;">
+<img src="img/Env_rotate_PCA.png" height = "380"/>
+</p>
+<p>The method then rotates original data such that x axis becomes our
+Principal Component 1, y axis - PC2, etc. It also allows to see the
+relation of the variables to these extracted Principal Components and
+relations among the variables, in terms of how correlated they are.</p>
+</section>
+
+<section id="behind-the-scenes" class="title-slide slide level1">
+<h1>Behind the scenes</h1>
+<p>Let us look at 8 objects (think of sites in which we measure
+biodiversity of plants).<br />
+For simplicity, we look at 3 variables only (though in reality it is of
+little use to apply PCA to these data).<br />
+<span style="color:blue"> Why is it not that useful?</span></p>
+<pre><code>##   Temperature Sunshine  Humidity
+## 1         1.0      3.0  3.527327
+## 2         1.5      4.0  6.874531
+## 3         2.0      6.0 10.412315
+## 4         2.1      2.0  5.390160
+## 5         8.0      7.0  5.928831
+## 6         9.0      9.8  6.831678
+## 7         8.8      8.0  9.239344
+## 8        10.0      5.0  8.756656</code></pre>
+</section>
+
+<section id="plot-data-along-one-variable-i.e.-dimension"
+class="title-slide slide level1">
+<h1>Plot data along one variable, i.e. dimension</h1>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/plotsimple%20PCA%20data-1.png" width="40%" height="40%" style="display: block; margin: auto;" />
+We see that the sites (and thus their composition - that is what we are
+interested in) differ a lot depending on the temperature at the site. We
+detect two groups of sites: one group of sites located in environments
+with high temperatures, and the second group with lower
+temperatures.</p>
+</section>
+
+<section id="plot-data-in-2-dimensional-space"
+class="title-slide slide level1">
+<h1>Plot data in 2-dimensional space</h1>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/continue%20simple%20PCA%20-%202dim-1.png" width="768" height="50%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="add-3rd-dimension" class="title-slide slide level1">
+<h1>Add 3rd dimension</h1>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/continue%20simple%20PCA%20-%203dim-1.png" width="768" height="50%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="back-to-pca-center-raw-data"
+class="title-slide slide level1">
+<h1>Back to PCA: center raw data</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mean_x <span class="ot">&lt;-</span> <span class="fu">mean</span>(Temperature); mean_x</span></code></pre></div>
+<pre><code>## [1] 5.3</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mean_y <span class="ot">&lt;-</span> <span class="fu">mean</span>(Sunshine); mean_y</span></code></pre></div>
+<pre><code>## [1] 5.6</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat_center <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temp_cent =</span> <span class="fu">scale</span>(Temperature, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Sun_cent =</span> <span class="fu">scale</span>(Sunshine, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>dat_center</span></code></pre></div>
+<pre><code>##   Temperature Sunshine  Humidity plotY temp_cent Sun_cent
+## 1         1.0      3.0  3.527327   0.1      -4.3     -2.6
+## 2         1.5      4.0  6.874531   0.1      -3.8     -1.6
+## 3         2.0      6.0 10.412315   0.1      -3.3      0.4
+## 4         2.1      2.0  5.390160   0.1      -3.2     -3.6
+## 5         8.0      7.0  5.928831   0.1       2.7      1.4
+## 6         9.0      9.8  6.831678   0.1       3.7      4.2
+## 7         8.8      8.0  9.239344   0.1       3.5      2.4
+## 8        10.0      5.0  8.756656   0.1       4.7     -0.6</code></pre>
+</section>
+
+<section id="extract-covariance-matrix"
+class="title-slide slide level1">
+<h1>Extract covariance matrix</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mat_centr <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">subset</span>(dat_center, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">&#39;temp_cent&#39;</span>, <span class="st">&#39;Sun_cent&#39;</span>)))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>covMat <span class="ot">&lt;-</span> <span class="fu">cov</span>(mat_centr)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>covMat</span></code></pre></div>
+<pre><code>##           temp_cent Sun_cent
+## temp_cent  15.62571     7.48
+## Sun_cent    7.48000     6.88</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>eig <span class="ot">&lt;-</span> <span class="fu">eigen</span>(covMat)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>eig</span></code></pre></div>
+<pre><code>## eigen() decomposition
+## $values
+## [1] 19.917283  2.588431
+## 
+## $vectors
+##            [,1]       [,2]
+## [1,] -0.8673785  0.4976490
+## [2,] -0.4976490 -0.8673785</code></pre>
+</section>
+
+<section id="a-little-bit-more-of-matrix-algebra"
+class="title-slide slide level1">
+<h1>A little bit more of matrix algebra</h1>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>NewDat <span class="ot">&lt;-</span> mat_centr <span class="sc">%*%</span> eig<span class="sc">$</span>vectors</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>NewDat</span></code></pre></div>
+<pre><code>##        [,1]       [,2]
+## 1  5.023615  0.1152933
+## 2  4.092277 -0.5032607
+## 3  2.663289 -1.9891931
+## 4  4.567148  1.5300857
+## 5 -3.038631  0.1293224
+## 6 -5.299426 -1.8016883
+## 7 -4.230182 -0.3399368
+## 8 -3.778090  2.8593775</code></pre>
+</section>
+
+<section id="plot-rotated-data" class="title-slide slide level1">
+<h1>Plot rotated data</h1>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/simplePCA-plotRot-1.png" width="60%" height="60%" style="display: block; margin: auto;" />
+Does this plot look familiar to you?</p>
+</section>
+
+<section id="what-pca-is-used-for" class="title-slide slide level1">
+<h1>What PCA is used for</h1>
+<ul>
+<li>exploration of the relations among variables;<br />
+</li>
+<li>dimensionality reduction technique, i.e. when we want to describe 10
+different variables with 2 or 3 instead (e.g. as predictors in a linear
+model)</li>
+</ul>
+</section>
+
+<section id="application-life-history-traits-of-mammals-in-se-asia"
+class="title-slide slide level1">
+<h1>Application: life history traits of mammals in SE Asia</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/SEAsia_map.png" height = "400"/>
+</p>
+</div>
+<div class="pull-right">
+<p>Investigating the relations between multiple life history traits of
+mammals in Southeast Asia. Initially we were interested in 143 mammal
+species. We extracted life history data from PanTheria database (Jones
+et al. 2009). Due to the scarcity of the life history data, we ended up
+with 25 species only.</p>
+</div>
+</section>
+
+<section id="data" class="title-slide slide level1">
+<h1>Data</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#  reading in the file with the 143 species of interest</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>spSEAsia <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&#39;data&#39;</span>, <span class="st">&#39;Species_SEAsia_02_02_16_fin.csv&#39;</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(spSEAsia)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    143 obs. of  7 variables:
+##  $ ID      : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Sp_bin  : chr  &quot;Aeromys tephromelas&quot; &quot;Arctogalidia trivirgata&quot; &quot;Arctonyx collaris&quot; &quot;Atherurus macrourus&quot; ...
+##  $ Area    : num  362087 2497556 5509688 2671967 362969 ...
+##  $ Genus   : chr  &quot;Aeromys&quot; &quot;Arctogalidia&quot; &quot;Arctonyx&quot; &quot;Atherurus&quot; ...
+##  $ Species : chr  &quot;tephromelas&quot; &quot;trivirgata&quot; &quot;collaris&quot; &quot;macrourus&quot; ...
+##  $ Location: chr  &quot;Sunda&quot; &quot;Both&quot; &quot;Indochina&quot; &quot;Indochina&quot; ...
+##  $ Cat5    : chr  &quot;Sunda&quot; &quot;Both&quot; &quot;Indochina&quot; &quot;Indochina&quot; ...</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the PanTheria database</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>pant <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&#39;data&#39;</span>, <span class="st">&#39;Pantheria.txt&#39;</span>))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(pant)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    5416 obs. of  55 variables:
+##  $ MSW05_Order                  : chr  &quot;Artiodactyla&quot; &quot;Carnivora&quot; &quot;Carnivora&quot; &quot;Carnivora&quot; ...
+##  $ MSW05_Family                 : chr  &quot;Camelidae&quot; &quot;Canidae&quot; &quot;Canidae&quot; &quot;Canidae&quot; ...
+##  $ MSW05_Genus                  : chr  &quot;Camelus&quot; &quot;Canis&quot; &quot;Canis&quot; &quot;Canis&quot; ...
+##  $ MSW05_Species                : chr  &quot;dromedarius&quot; &quot;adustus&quot; &quot;aureus&quot; &quot;latrans&quot; ...
+##  $ MSW05_Binomial               : chr  &quot;Camelus dromedarius&quot; &quot;Canis adustus&quot; &quot;Canis aureus&quot; &quot;Canis latrans&quot; ...
+##  $ X1.1_ActivityCycle           : num  3 1 2 2 2 2 -999 2 3 -999 ...
+##  $ X5.1_AdultBodyMass_g         : num  492714 10392 9659 11989 31757 ...
+##  $ X8.1_AdultForearmLen_mm      : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X13.1_AdultHeadBodyLen_mm    : num  -999 745 828 872 1055 ...
+##  $ X2.1_AgeatEyeOpening_d       : num  -999 -999 7.5 11.9 14 ...
+##  $ X3.1_AgeatFirstBirth_d       : num  1652 -999 -999 365 548 ...
+##  $ X18.1_BasalMetRate_mLO2hr    : num  40293 -999 -999 3699 11254 ...
+##  $ X5.2_BasalMetRateMass_g      : num  407000 -999 -999 10450 33100 ...
+##  $ X6.1_DietBreadth             : num  3 6 6 1 1 3 2 2 -999 -999 ...
+##  $ X7.1_DispersalAge_d          : num  -999 330 -999 255 180 ...
+##  $ X9.1_GestationLen_d          : num  386.5 65 61.2 61.7 63.5 ...
+##  $ X12.1_HabitatBreadth         : num  1 1 1 1 1 -999 -999 1 1 -999 ...
+##  $ X22.1_HomeRange_km2          : num  196.32 1.01 2.95 18.88 159.86 ...
+##  $ X22.2_HomeRange_Indiv_km2    : num  -999 1.01 3.13 19.91 43.13 ...
+##  $ X14.1_InterbirthInterval_d   : num  614 -999 365 365 365 ...
+##  $ X15.1_LitterSize             : num  0.98 4.5 3.74 5.72 4.98 1.22 1 1.22 1.01 -999 ...
+##  $ X16.1_LittersPerYear         : num  1 -999 -999 -999 2 1 1 1 -999 -999 ...
+##  $ X17.1_MaxLongevity_m         : num  480 137 192 262 354 ...
+##  $ X5.3_NeonateBodyMass_g       : num  36751 -999 212 200 412 ...
+##  $ X13.2_NeonateHeadBodyLen_mm  : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X21.1_PopulationDensity_n.km2: num  0.98 0.74 0.22 0.25 0.01 0.54 -999 0.75 4.89 -999 ...
+##  $ X10.1_PopulationGrpSize      : num  11 -999 -999 -999 -999 -999 -999 21 -999 -999 ...
+##  $ X23.1_SexualMaturityAge_d    : num  1948 250 371 373 679 ...
+##  $ X10.2_SocialGrpSize          : num  10 -999 -999 -999 -999 40 110 40 2.05 -999 ...
+##  $ X24.1_TeatNumber             : int  -999 8 8 8 9 -999 -999 -999 -999 -999 ...
+##  $ X12.2_Terrestriality         : num  1 1 1 1 1 -999 -999 1 2 -999 ...
+##  $ X6.2_TrophicLevel            : int  1 2 2 3 3 1 1 1 -999 -999 ...
+##  $ X25.1_WeaningAge_d           : num  389.4 52.9 61.3 43.7 44.8 ...
+##  $ X5.4_WeaningBodyMass_g       : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X13.3_WeaningHeadBodyLen_mm  : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ References                   : chr  &quot;511;543;719;1274;1297;1594;1654;1822;1848;2655;3044&quot; &quot;542;543;730;1113;1297;1573;2655&quot; &quot;543;679;730;1113;1297;1573;2655&quot; &quot;367;542;543;730;1113;1297;1573;1822;2655&quot; ...
+##  $ X5.5_AdultBodyMass_g_EXT     : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X16.2_LittersPerYear_EXT     : num  -999 -999 1.1 1.1 -999 -999 -999 -999 1.05 -999 ...
+##  $ X5.6_NeonateBodyMass_g_EXT   : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X5.7_WeaningBodyMass_g_EXT   : num  -999 -999 -999 -999 -999 -999 -999 -999 -999 -999 ...
+##  $ X26.1_GR_Area_km2            : num  -999 10581413 25739527 17099094 50803440 ...
+##  $ X26.2_GR_MaxLat_dd           : num  -999 16.7 47 71.4 83.3 ...
+##  $ X26.3_GR_MinLat_dd           : num  -999 -28.73 -4.71 8.02 11.48 ...
+##  $ X26.4_GR_MidRangeLat_dd      : num  -999 -6 21.1 39.7 47.4 ...
+##  $ X26.5_GR_MaxLong_dd          : num  -999 43.5 108.5 -67.1 179.7 ...
+##  $ X26.6_GR_MinLong_dd          : num  -999 -17.5 -17.1 -168.1 -171.8 ...
+##  $ X26.7_GR_MidRangeLong_dd     : num  -999 13 45.7 -117.6 3.9 ...
+##  $ X27.1_HuPopDen_Min_n.km2     : int  -999 0 0 0 0 1 0 1 0 -999 ...
+##  $ X27.2_HuPopDen_Mean_n.km2    : num  -999 35.2 79.3 27.3 37.9 ...
+##  $ X27.3_HuPopDen_5p_n.km2      : num  -999 1 0 0 0 8 0 4 0 -999 ...
+##  $ X27.4_HuPopDen_Change        : num  -999 0.14 0.1 0.06 0.04 0.09 0.05 0.11 0.05 -999 ...
+##  $ X28.1_Precip_Mean_mm         : num  -999 90.8 44.6 53 34.8 ...
+##  $ X28.2_Temp_Mean_01degC       : num  -999 236.51 217.23 58.18 4.82 ...
+##  $ X30.1_AET_Mean_mm            : num  -999 923 438 503 313 ...
+##  $ X30.2_PET_Mean_mm            : num  -999 1534 1359 728 561 ...</code></pre>
+<pre><code>## [1] 138</code></pre>
+</section>
+
+<section id="species-in-the-dataset" class="title-slide slide level1">
+<h1>Species in the dataset</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Sri_Lankan_elephant_(Elephas_maximus_maximus)_female_and_young_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Elephas
+maximus
+</p>
+<p style="text-align:center;">
+<img src="img/Canis_aureus_syriacus_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Canis
+aureus
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src="img/Tupaia_glis_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Tupaia
+glis
+</p>
+<p style="text-align:center;">
+<img src="img/Bornean_Tarsier_(Cephalopachus_bancanus_borneanus)_wikip.jpeg" height = "250"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="wikipedia">@wikipedia</span>: Tarsius
+bancanus
+</p>
+</div>
+</section>
+
+<section id="run-pca" class="title-slide slide level1">
+<h1>Run PCA</h1>
+<p>We mainly use library vegan in R for multivariate statistics.<br />
+Function <code>rda()</code> is used to run PCA and RDA.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(LH_noNA)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    25 obs. of  5 variables:
+##  $ bin            : chr  &quot;Axis porcinus&quot; &quot;Callosciurus erythraeus&quot; &quot;Callosciurus nigrovittatus&quot; &quot;Callosciurus notatus&quot; ...
+##  $ AdultBodyMass_g: num  37448 283 208 209 9659 ...
+##  $ LitterSize     : num  1 1.94 2.36 2.62 3.74 4.3 1.41 1.02 1.01 1.02 ...
+##  $ DietBreadth    : num  3 3 6 6 6 1 3 4 4 4 ...
+##  $ HomeRange_km2  : num  0.52 0.00895 0.01 0.02 2.95 ...
+##  - attr(*, &quot;na.action&quot;)= &#39;omit&#39; Named int [1:113] 1 2 3 4 6 7 8 9 10 11 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:113] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>traits_SEas <span class="ot">&lt;-</span> LH_noNA <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">&#39;bin&#39;</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>pca_SEasia <span class="ot">&lt;-</span> <span class="fu">rda</span>(traits_SEas, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Since our variables (Adult body mass, litter size, diet breadth and
+home range) are in very different units, we use option ‘scale=’, so that
+all variables are now unitless and comparable. In other words we are
+applying PCA on correlation matrix (instead of covariance matrix).</p>
+</section>
+
+<section id="interpreting-pca" class="title-slide slide level1">
+<h1>Interpreting PCA</h1>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pca_SEasia)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## rda(X = traits_SEas, scale = TRUE) 
+## 
+## Partitioning of correlations:
+##               Inertia Proportion
+## Total               4          1
+## Unconstrained       4          1
+## 
+## Eigenvalues, and their contribution to the correlations 
+## 
+## Importance of components:
+##                         PC1    PC2    PC3     PC4
+## Eigenvalue            1.756 1.3178 0.7871 0.13909
+## Proportion Explained  0.439 0.3294 0.1968 0.03477
+## Cumulative Proportion 0.439 0.7685 0.9652 1.00000
+## 
+## Scaling 2 for species and site scores
+## * Species are scaled proportional to eigenvalues
+## * Sites are unscaled: weighted dispersion equal on all dimensions
+## * General scaling constant of scores:  3.130169 
+## 
+## 
+## Species scores
+## 
+##                     PC1      PC2     PC3     PC4
+## AdultBodyMass_g  1.3521  0.03785  0.7178 -0.3236
+## LitterSize       0.1864 -1.36588 -0.7041 -0.2312
+## DietBreadth     -0.5178 -1.13684  0.9260  0.1776
+## HomeRange_km2    1.4732 -0.26151 -0.2442  0.3886
+## 
+## 
+## Site scores (weighted sums of species scores)
+## 
+##          PC1      PC2      PC3      PC4
+## 5   -0.19757  0.48504  0.18212  0.15041
+## 12  -0.19571  0.12870 -0.14324 -0.42883
+## 14  -0.38753 -0.64136  0.54898  0.21536
+## 15  -0.37701 -0.74093  0.46300  0.05695
+## 17  -0.23092 -1.19243  0.06243 -0.31878
+## 30   1.16382 -0.63294 -1.88216  1.23211
+## 35   2.63947  0.08807  1.42807 -0.61505
+## 42  -0.29247  0.27630  0.43850  0.44816
+## 44  -0.28865  0.27910  0.44006  0.46909
+## 45  -0.29010  0.27575  0.43768  0.45582
+## 46  -0.11291  0.19794 -0.53586 -0.94456
+## 60  -0.21544  0.48492  0.16407  0.19169
+## 62  -0.10107  0.67410 -0.13027  0.02344
+## 77  -0.24905  0.26688  0.42727  0.57307
+## 85   0.60166  0.31138 -0.96481  0.85470
+## 86  -0.21168 -1.02981  0.19256  0.09990
+## 91  -0.08663  0.89004 -0.38796 -0.45600
+## 92  -0.07401  0.88704 -0.39270 -0.41369
+## 94   0.02831  0.30603 -0.90366 -1.17058
+## 116 -0.15381 -1.27248 -0.40756 -1.40342
+## 117 -0.28906  0.27615  0.44100  0.44419
+## 120 -0.23259  0.48838  0.16707  0.14825
+## 126 -0.25426 -0.18155  0.04121 -0.29994
+## 133 -0.14193  0.29341  0.05038 -0.22718
+## 137 -0.05087 -0.91771  0.26384  0.91487</code></pre>
+<p><strong>Inertia</strong>: term originates from Correspondence
+Analysis (arguably some of the first multivariate analysis) and means
+variation in the data. In case of PCA on covariance matrix inertia is a
+sum of the variances of the variables; in case of PCA on correlation
+matrix, it is the sum of the diagonal values of the correlation
+matrix.<br />
+<span style="color:blue"> What are the values on the diagonal in such a
+correlation matrix?</span></p>
+</section>
+
+<section id="interpreting-pca-1" class="title-slide slide level1">
+<h1>Interpreting PCA</h1>
+<pre><code>## 
+## Call:
+## rda(X = traits_SEas, scale = TRUE) 
+## 
+## Partitioning of correlations:
+##               Inertia Proportion
+## Total               4          1
+## Unconstrained       4          1
+## 
+## Eigenvalues, and their contribution to the correlations 
+## 
+## Importance of components:
+##                         PC1    PC2    PC3     PC4
+## Eigenvalue            1.756 1.3178 0.7871 0.13909
+## Proportion Explained  0.439 0.3294 0.1968 0.03477
+## Cumulative Proportion 0.439 0.7685 0.9652 1.00000
+## 
+## Scaling 2 for species and site scores
+## * Species are scaled proportional to eigenvalues
+## * Sites are unscaled: weighted dispersion equal on all dimensions
+## * General scaling constant of scores:  3.130169 
+## 
+## 
+## Species scores
+## 
+##                     PC1      PC2     PC3     PC4
+## AdultBodyMass_g  1.3521  0.03785  0.7178 -0.3236
+## LitterSize       0.1864 -1.36588 -0.7041 -0.2312
+## DietBreadth     -0.5178 -1.13684  0.9260  0.1776
+## HomeRange_km2    1.4732 -0.26151 -0.2442  0.3886
+## 
+## 
+## Site scores (weighted sums of species scores)
+## 
+##          PC1      PC2      PC3      PC4
+## 5   -0.19757  0.48504  0.18212  0.15041
+## 12  -0.19571  0.12870 -0.14324 -0.42883
+## 14  -0.38753 -0.64136  0.54898  0.21536
+## 15  -0.37701 -0.74093  0.46300  0.05695
+## 17  -0.23092 -1.19243  0.06243 -0.31878
+## 30   1.16382 -0.63294 -1.88216  1.23211
+## 35   2.63947  0.08807  1.42807 -0.61505
+## 42  -0.29247  0.27630  0.43850  0.44816
+## 44  -0.28865  0.27910  0.44006  0.46909
+## 45  -0.29010  0.27575  0.43768  0.45582
+## 46  -0.11291  0.19794 -0.53586 -0.94456
+## 60  -0.21544  0.48492  0.16407  0.19169
+## 62  -0.10107  0.67410 -0.13027  0.02344
+## 77  -0.24905  0.26688  0.42727  0.57307
+## 85   0.60166  0.31138 -0.96481  0.85470
+## 86  -0.21168 -1.02981  0.19256  0.09990
+## 91  -0.08663  0.89004 -0.38796 -0.45600
+## 92  -0.07401  0.88704 -0.39270 -0.41369
+## 94   0.02831  0.30603 -0.90366 -1.17058
+## 116 -0.15381 -1.27248 -0.40756 -1.40342
+## 117 -0.28906  0.27615  0.44100  0.44419
+## 120 -0.23259  0.48838  0.16707  0.14825
+## 126 -0.25426 -0.18155  0.04121 -0.29994
+## 133 -0.14193  0.29341  0.05038 -0.22718
+## 137 -0.05087 -0.91771  0.26384  0.91487</code></pre>
+<p><strong>Eigenvalues</strong>: Measure the importance of each
+principal component, i.e. how much variance it captures. Also shows
+proportion explained by dividing by the total inertia.<br />
+<strong>Species scores</strong>: coordinates (in the new rotated space)
+of the arrow heads of the variables. Term ‘Species’ is a legacy-term and
+has its name because the first multivariate methods were originally
+developed for analyses of communities composed of species. So, the term
+‘Species’ is usually used to refer to the response variables
+(irrespective of what they represent).<br />
+<strong>Site scores</strong>: Coordinates of the sites in the new
+ordination space. ‘Sites’ are used to refer to objects, or samples.
+(here, our species, actually!)</p>
+</section>
+
+<section id="scaling-1-and-2-in-pca" class="title-slide slide level1">
+<h1>Scaling 1 and 2 in PCA</h1>
+<ul>
+<li><strong>Scaling 1</strong>: distance biplot. Eigenvectors are scaled
+to unit length. <strong>Distances among objects approximate their
+Euclidian distances in multidimensional space.</strong> The angles among
+vectors are meaningless.<br />
+</li>
+<li><strong>Scaling 2</strong>: correlation biplot. Each eigenvector is
+scaled to the square root of its eigenvalue. <strong>The angles between
+vectors (variables) reflect their correlations.</strong> Distances among
+objects are not approximations of their Euclidian distances in
+multidimensional space.<br />
+</li>
+<li>So: if interested in relationships among objects primarily, choose
+scaling 1. If interested in the relations among descriptors
+(i.e. variables), choose scaling 2.</li>
+</ul>
+</section>
+
+<section id="how-many-principal-components-to-retain"
+class="title-slide slide level1">
+<h1>How many Principal Components to retain?</h1>
+<p>Usually the researcher looks at the eigenvalues and decides how many
+axes are worth displaying. PCA is not a statistical test, so the
+decisions can be based on a (rather arbitrary) choice to display certain
+percentage of total variance in the data. Say, 75% of the data variance.
+Then, one displays as many principal components, as needed, to reach a
+total of 75% of data variance.</p>
+<p>Two other commonly used approaches: <strong>Kaiser-Guttman
+criterion</strong> and <strong>a broken stick model</strong>.</p>
+</section>
+
+<section id="kaiser-guttman-criterion" class="title-slide slide level1">
+<h1>Kaiser-Guttman criterion</h1>
+<p>Based on the mean of all eigenvalues. The principal components whose
+eigenvalue is &gt; this mean are used for displaying.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract eigenvalues</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>eigval <span class="ot">&lt;-</span> pca_SEasia<span class="sc">$</span>CA<span class="sc">$</span>eig</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>eigval[eigval <span class="sc">&gt;</span> <span class="fu">mean</span>(eigval)]  </span></code></pre></div>
+<pre><code>##      PC1      PC2 
+## 1.756083 1.317759</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(eigval, <span class="at">las =</span> <span class="dv">2</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span> <span class="fu">mean</span>(eigval), <span class="at">col =</span> <span class="st">&#39;blue&#39;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/Kaiser-Guttman-1.png" width="40%" height="40%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="a-broken-stick-model" class="title-slide slide level1">
+<h1>A broken-stick model</h1>
+<p style="font-size: 80%;">
+This method randomly divides a stick of unit length in the same number
+of pieces as there are Principal Components. The pieces are then sorted
+in the decreasing order and compared to the eigenvalues. Only those
+principal components are chosen to be displayed that are larger than the
+respective piece of the stick.
+</p>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/broken%20stick-1.png" width="40%" height="40%" style="display: block; margin: auto;" /></p>
+<pre><code>##       PC1       PC2       PC3       PC4 
+## 2.0833333 1.0833333 0.5833333 0.2500000</code></pre>
+<pre><code>##       PC1       PC2       PC3       PC4 
+## 1.7560827 1.3177588 0.7870678 0.1390907</code></pre>
+</section>
+
+<section id="visualize-pca-results" class="title-slide slide level1">
+<h1>Visualize PCA results</h1>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">biplot</span>(pca_SEasia, <span class="at">scaling =</span> <span class="st">&#39;species&#39;</span>)</span></code></pre></div>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/plot%20PCA-1.png" width="60%" height="60%" style="display: block; margin: auto;" />
+<span style="color:blue"> Why do we use scaling = ‘species’?</span></p>
+</section>
+
+<section id="make-your-plot-nicer" class="title-slide slide level1">
+<h1>Make your plot nicer</h1>
+<p><img src="01b_Lecture_PCA_files/figure-revealjs/custom-plotPCA-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="questions" class="title-slide slide level1">
+<h1>Questions?</h1>
+
+</section>
+
+<section id="check-up" class="title-slide slide level1">
+<h1>Check-up</h1>
+<ul>
+<li>What are assumptions of PCA?</li>
+<li>Can we conduct PCA if several variables are strongly correlated
+(i.e. considered a problem of collinearity in GLMMs)?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="01b_Lecture_PCA_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="01b_Lecture_PCA_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

@@ -1,0 +1,40 @@
+.reveal ul {
+  font-size: 30px;
+}
+.reveal ol {
+  font-size: 30px;
+  margin-bottom: -10px;
+}
+.reveal p {
+  font-size: 30px;
+  margin-bottom: -10px;
+}
+.reveal  pre {
+  font-size: 14px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: -3px;
+}
+.reveal code.r{
+  font-size: 14px;
+}
+
+pre[class] {
+  max-height: 100px;
+}
+
+.reveal .reflist ul{
+  font-size: 26px;
+}
+
+.reveal .pull-left {
+  float: left;
+  width: 47%;
+  font-size: 80%;
+}
+
+.reveal .pull-right {
+  float: right;
+  width: 47%;
+  font-size: 80%;
+}

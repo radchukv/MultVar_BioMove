@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Radchuk Viktoriia" />
+  <meta name="dcterms.date" content="2023-03-09" />
+  <title>Introduction to Multivariate Analysis</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="01a_Intro_Multivar_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="01a_Intro_Multivar_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="../css/default.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="01a_Intro_Multivar_files/header-attrs-2.20/header-attrs.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Introduction to Multivariate Analysis</h1>
+    <h2 class="author">Radchuk Viktoriia</h2>
+    <h3 class="date">2023-03-09</h3>
+</section>
+
+<section id="orga-admin" class="title-slide slide level1">
+<h1>Orga / Admin</h1>
+<p>We meet between 10:00 and 15:00 in two sessions:</p>
+<ul>
+<li>10:00 - 11:50, - morning session<br />
+</li>
+<li>13:10 - 15:00, - afternoon session.</li>
+</ul>
+<p>The first two days (12th and 13th of April) are in person at the IZW
+lecture hall. The third day will take place remotely, via the zoom link
+shared with you per email.</p>
+</section>
+
+<section id="contents-of-the-course" class="title-slide slide level1">
+<h1>Contents of the course</h1>
+<p>Day 1:</p>
+<ul>
+<li>General intro to multivariate analyses</li>
+<li>Principal Component Analysis (PCA), data requirements,
+interpretation</li>
+<li>Redundancy Analysis (RDA)</li>
+<li>Variation partitioning</li>
+</ul>
+</section>
+
+<section id="contents-of-the-course-1" class="title-slide slide level1">
+<h1>Contents of the course</h1>
+<p>Day 2:</p>
+<ul>
+<li>Types of data</li>
+<li>Distance-based vs transformation-based approaches</li>
+<li>Correspondence Analysis (CA) and Canonical Correspondence Analysis
+(CCA)</li>
+<li>Principal Coordinate Analysis (PCoA)</li>
+<li>Distance-based Redundancy Analysis (db-RDA)</li>
+</ul>
+</section>
+
+<section id="contents-of-the-course-2" class="title-slide slide level1">
+<h1>Contents of the course</h1>
+<p>Day 3:</p>
+<ul>
+<li>Non-metric Multidimensional Scaling (NMDS)</li>
+<li>Summary of approaches and data requirements<br />
+</li>
+<li>Work on own data</li>
+</ul>
+</section>
+
+<section
+id="how-multivariate-stats-differs-from-the-stats-you-are-used-to"
+class="title-slide slide level1">
+<h1>How multivariate stats differs from the stats you are used to?</h1>
+<p>Linear model</p>
+<p><span class="math inline">\(y = \alpha + \beta\times x +
+\epsilon\)</span>;</p>
+<p><span class="math inline">\(\epsilon \sim N(0, \sigma^2)\)</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> is an intercept and
+<span class="math inline">\(\beta\)</span> is a slope.</p>
+<p><img src="01a_Intro_Multivar_files/figure-revealjs/linear%20model-1.png" width="50%" height="50%" /></p>
+</section>
+
+<section id="multiple-linear-regression"
+class="title-slide slide level1">
+<h1>Multiple linear regression</h1>
+<p><span class="math inline">\(y = \alpha + \beta_1\times x_1 +
+\beta_2\times x_2 + ... + \beta_n\times x_n + \epsilon_i\)</span>;</p>
+<p><span class="math inline">\(\epsilon_i \sim N(0,
+\sigma^2)\)</span></p>
+<p>where <span class="math inline">\(\beta_n\)</span> are slopes for
+<span class="math inline">\(n\)</span> predictor variables (denoted as
+<span class="math inline">\(x_n\)</span>).</p>
+</section>
+
+<section id="an-ecological-example" class="title-slide slide level1">
+<h1>An ecological example</h1>
+<p style="text-align:center;">
+<img src="img/PlecotusAuritus.png" height = "300"/>
+</p>
+<p style="font-size: 40%;">
+@ Yehor Yatsiuk
+</p>
+<p>We are studying population abundance of <em>Plecotus auritus</em>
+species in 30 different sites, located across the gradient of the
+availability in roosting sites and food resources (insects). And we are
+interested to know how these two predictors affect population abundance
+of this species.</p>
+<p><strong>Our response variable</strong>: abundance of <em>P.
+auritus</em>.<br />
+<strong>Our predictors</strong>: roost availability and insect
+availability.</p>
+</section>
+
+<section id="beyond-a-single-response-variable"
+class="title-slide slide level1">
+<h1>Beyond a single response variable</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Rohit_bats.png" height = "400"/>
+</p>
+<p style="font-size: 40%;">
+@ Rohit Chakravarty
+</p>
+</div>
+<div class="pull-right">
+<ul>
+<li>What if we wanted to look at how environmental variables affect not
+only the abundance of a single bat species but of several of them,
+inhabiting same study sites?<br />
+</li>
+<li>Say <span class="math inline">\(p\)</span> is the total number of
+species across our studied 30 sites. And <span
+class="math inline">\(p\)</span> = 14.<br />
+</li>
+<li>So we now have <strong><span class="math inline">\(p\)</span>
+response variables</strong>, each reflecting the abundance of each study
+species.<br />
+</li>
+</ul>
+</div>
+</section>
+
+<section
+id="difference-between-multiple-regression-and-multivariate-stats"
+class="title-slide slide level1">
+<h1>Difference between multiple regression and multivariate stats</h1>
+<p>Multiple linear regression:<br />
+we have 30 sites, in each we study abundance of <em>P. auritus</em>
+using 2 predictors (roost and food availability, <span
+class="math inline">\(x\)</span> and <span
+class="math inline">\(v\)</span>, respectively).</p>
+<p><span class="math display">\[
+\mathbf{Y} =
+\begin{bmatrix}
+y_1  \\
+y_2  \\
+y_3  \\
+\dots  \\
+y_{30}  \\
+\end{bmatrix};
+\mathbf{X} =
+\begin{bmatrix}
+x_1  &amp; v_1  \\
+x_2  &amp; v_2 \\
+x_3  &amp; v_3 \\
+\vdots  &amp; \vdots \\
+x_{30}  &amp; v_{30} \\
+\end{bmatrix}
+\]</span></p>
+<p>Sites are here shown in rows.</p>
+</section>
+
+<section
+id="difference-between-multiple-regression-and-multivariate-stats-1"
+class="title-slide slide level1">
+<h1>Difference between multiple regression and multivariate stats</h1>
+<p>Multivariate stats:<br />
+we have 30 sites, in each we study abundance of <span
+class="math inline">\(p\)</span> species (14) using 2 predictors (roost
+and food availability, <span class="math inline">\(x\)</span> and <span
+class="math inline">\(v\)</span>, respectively).</p>
+<p><span class="math display">\[
+\mathbf{Y} =
+\begin{bmatrix}
+y_{1_1} &amp; y_{1_2} &amp; y_{1_3} &amp; \dots y_{1_{14}} \\
+y_{2_1} &amp; y_{2_2} &amp; y_{2_3} &amp; \dots y_{2_{14}} \\
+y_{3_1} &amp; y_{3_2} &amp; y_{3_3} &amp; \dots y_{3_{14}} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots  \\
+y_{30_1} &amp; y_{30_2} &amp; y_{30_3} &amp; \dots y_{30_{14}}\\
+\end{bmatrix};
+\mathbf{X} =
+\begin{bmatrix}
+x_1  &amp; v_1  \\
+x_2  &amp; v_2 \\
+x_3  &amp; v_3 \\
+\vdots  &amp; \vdots \\
+x_{30}  &amp; v_{30} \\
+\end{bmatrix}
+\]</span></p>
+</section>
+
+<section id="multivariate-analysis-methods"
+class="title-slide slide level1">
+<h1>Multivariate analysis methods</h1>
+<ul>
+<li>Principal Component Analysis (PCA)</li>
+<li>Correspondence Analysis (CA)</li>
+<li>Canonical Correspondence Analysis (CCA)</li>
+<li>Redundancy Analysis (RDA)</li>
+<li>Principal Coordinate Analysis (PCoA)</li>
+<li><span style="color:grey">Moran’s Eigenvector Maps</span></li>
+<li><span style = 'color:grey'>Factor Analysis</li>
+<li>Discriminant analysis</span></li>
+<li>NMDS<br />
+</li>
+<li><span style="color:grey">Principal Response Curves</span><br />
+</li>
+<li><span style="color:grey">k-means clustering</span><br />
+</li>
+<li>….</li>
+</ul>
+<p>(non-exhaustive list)</p>
+</section>
+
+<section id="applicable-beyond-community-data"
+class="title-slide slide level1">
+<h1>Applicable beyond community data</h1>
+<p>Although several multivariate analysis methods (e.g. CA and CCA) were
+initially developed specifically to analyse community data, they are
+applicable more broadly.<br />
+When dealing with other types of the data than community data, sites
+(clearly understood for community data) are also referred to as objects
+or samples in multivariate analysis.</p>
+</section>
+
+<section
+id="example-i-effects-of-environment-on-individual-bat-condition"
+class="title-slide slide level1">
+<h1>Example I: effects of environment on individual bat condition</h1>
+<p><strong>Sample</strong>: bat individual<br />
+<strong>Response variables</strong>: temperature, hormone level,
+parasite load<br />
+<strong>Predictor variables</strong>: habitat structure, food
+availability, weather descriptors<br />
+So now each object /sample is an individual, and we have measurements
+per this individual</p>
+</section>
+
+<section
+id="example-i-effects-of-environment-on-individual-bat-condition-1"
+class="title-slide slide level1">
+<h1>Example I: effects of environment on individual bat condition</h1>
+<p>Say we sampled for 40 bat individuals their temperature (b), cortisol
+(c), body mass (m), and parasite load (l). We want to understand how
+morpho-physiological state of those individuals is affected by 4
+predictors (habitat structure - h, food availability - f, precipitation
+-p, and temperature -t).</p>
+<p><span class="math display">\[
+\mathbf{Y} =
+\begin{bmatrix}
+b_1 &amp; c_1 &amp; m_1 &amp; l_1 \\
+b_2 &amp; c_2 &amp; m_2 &amp; l_2 \\
+b_3 &amp; c_3 &amp; m_3 &amp; l_3 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots  \\
+b_{40} &amp; c_{40} &amp; m_{40} &amp; l_{40}\\
+\end{bmatrix};
+\mathbf{X} =
+\begin{bmatrix}
+h_1  &amp; f_1 &amp; p_1 &amp; t_1  \\
+h_2  &amp; f_2 &amp; p_2 &amp; t_2 \\
+h_3  &amp; f_3 &amp; p_3 &amp; t_3 \\
+\vdots  &amp; \vdots &amp; \vdots  &amp; \vdots \\
+h_{40}  &amp; f_{40} &amp; p_{40} &amp; t_{40} \\
+\end{bmatrix}
+\]</span></p>
+</section>
+
+<section
+id="example-ii-effect-of-data-availability-on-the-model-choice-for-population-viability-analysis-pva"
+class="title-slide slide level1">
+<h1>Example II: Effect of data availability on the model choice for
+Population Viability Analysis (PVA)</h1>
+<p><strong>Sample</strong>: publication reporting a PVA model<br />
+<strong>Response variables</strong>: studied species, social/territorial
+organisation of the species, availability of the fine-scale dispersal
+data, etc.<br />
+<strong>Possible predictor variables</strong>: Is the used model an
+individual-based model or a more aggregated model like population matrix
+model?</p>
+</section>
+
+<section id="effect-of-data-availability-on-the-complexity-of-pva-model"
+class="title-slide slide level1">
+<h1>Effect of data availability on the complexity of PVA model</h1>
+<p style="font-size: 80%; ">
+Radchuk et al. (2016) analysed models developed to assess population
+viability of 37 species. For each species we found a pair of models: an
+individual-based and a matrix-model.<br />
+<strong>The aim</strong>: to understand how data availability and
+complexity of the species life history and ecology affect the choice of
+the model complexity.
+</p>
+<p style="text-align:center;">
+<img src="img/Table1_Radchuk_etal_2016.png" height = "350"/>
+</p>
+</section>
+
+<section id="impact-of-data-availability-on-the-complexity-of-pva-model"
+class="title-slide slide level1">
+<h1>Impact of data availability on the complexity of PVA model</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/IBMvsPBM_DiscriminantAnalysis.png" height = "450"/>
+</p>
+<p style="font-size: 40%;">
+unpubl. data Radchuk
+</p>
+</div>
+<div class="pull-right">
+<p>Discriminant Analysis classifying each model using the obtained
+discriminant function. “I” corresponds to individual-based model (in
+black) and “P” to population-based (e.g. matrix model, in red).
+Discriminant function assigns models to the left of “0” on abscissa to
+Is, and those to the right – to Ps. Certain models are misclassified by
+the function.</p>
+</div>
+</section>
+
+<section id="bat-diversity-in-eastern-ukraine"
+class="title-slide slide level1">
+<h1>Bat diversity in Eastern Ukraine</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Landscape_EUkraine1.jpg" height = "300" width = "450"/>
+</p>
+<p style="font-size: 40%;">
+@ Anton Vlaschenko
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src= "img/AVlaschenko_photo.jpg" height = "150">
+</p>
+<p>Vlaschenko et al. 2022 investigated the impact of land-use types and
+forest age structure on bat assemblages in Eastern Ukrainian
+Forests.</p>
+</div>
+</section>
+
+<section
+id="how-land-use-types-shape-bat-communities-in-eastern-ukrainian-forests"
+class="title-slide slide level1">
+<h1>How land use types shape bat communities in Eastern Ukrainian
+forests</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Vlaschenko_et_al_RDA_LUTypes.png" height = "400"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="Vlaschenko">@Vlaschenko</span> et
+al. 2022
+</p>
+</div>
+<div class="pull-right">
+<ul>
+<li><p style="color:orange; font-style:italic";>PPY - Pipistrellus pygmaeus</p></li>
+<li><p style="color:orange; font-style:italic";>PNA - Pipistrellus nathusii</p></li>
+<li><p style="color:orange; font-style:italic";>MDA - Myotis daubentonii</p></li>
+<li><p style="color:orange; font-style:italic";>MBR - Myotis brandtii</p></li>
+<li><p style="color:orange; font-style:italic";>NNO – Nyctalus noctula</p></li>
+<li><p style="color:orange; font-style:italic";>PKU – Pipistrellus kuhlii</p></li>
+<li><p style="color:orange; font-style:italic";>PAU – Plecotus auritus</p></li>
+<li><p style="color:orange; font-style:italic";>VMU – Vespertilio murinus</p></li>
+</ul>
+</div>
+</section>
+
+<section id="impact-of-fungicide-on-aquatic-community"
+class="title-slide slide level1">
+<h1>Impact of fungicide on aquatic community</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/McMahon_Fungicide_Community.png" height = "450" width = "450"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="McMahon">@McMahon</span> et al. 2012
+</p>
+</div>
+<div class="pull-right">
+<p style="font-size: 90%;">
+McMahon et al. (2012) investigated the effect of chlorothalonil on the
+diversity of a 34-species rich multi-trophic community, as well as on
+the ecosystem functioning delivered by this community.<br />
+Results of distance-based RDA to assess the effect of the fungicide on
+community and ecosystem functioning.
+</p>
+</div>
+</section>
+
+<section id="questions" class="title-slide slide level1">
+<h1>Questions?</h1>
+
+</section>
+
+<section id="main-sources-used-throughout-this-course"
+class="title-slide slide level1">
+<h1>Main sources used throughout this course</h1>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Legendre&Legendre.png" height = "400"/>
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src="img/BorcardEtAl.png" height = "400"/>
+</p>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="01a_Intro_Multivar_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="01a_Intro_Multivar_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
