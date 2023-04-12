@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 PanTheria dataset that we used during the lecture has the following variables describing the environment in which the species live:
+
 - 'X27.2_HuPopDen_Mean_n.km2', 
 - 'X28.1_Precip_Mean_mm',
 - 'X28.2_Temp_Mean_01degC', 
@@ -21,6 +22,7 @@ PanTheria dataset that we used during the lecture has the following variables de
 Please extract them for as many Southeast Asian animal species that we intended to study (from the data 'Species_SEAsia_02_02_16_fin.csv') as possible (you will have to merge both data frames).
 
 Next, conduct PCA on these environmental variables. 
+
 - How do environmental variables relate to each other? 
 - And how do they relate to the studied species? Are some species rather occurring at certain values of particular environmental variables?
 - Visualize the results.

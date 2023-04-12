@@ -1,0 +1,100 @@
+---
+title: "Solution for the exercise on PCA"
+author: "Radchuk Viktoriia"
+date: "2022-03-20"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(vegan)
+```
+
+# Read in the data
+```{r LH data read, echo = TRUE}
+#  reading in the file with the 143 species of interest
+spSEAsia <- read.csv(file = here::here('data', 'Species_SEAsia_02_02_16_fin.csv'))
+str(spSEAsia)
+
+# read in the PanTheria database
+pant <- read.delim(file = here::here('data', 'Pantheria.txt'))
+str(pant)
+```
+
+# Prepare data    
+```{r data prep, echo = TRUE}
+## joining both datasets together
+pant$Sp_bin <- pant$MSW05_Binomial
+LH <- merge(pant, spSEAsia, by = "Sp_bin")
+nrow(LH)  
+
+## Select 5 life history traits of interest
+LH_subs <- LH %>%
+  select('Genus', 'Species', 'Sp_bin', 
+         'X5.1_AdultBodyMass_g',  'X15.1_LitterSize',
+         'X6.1_DietBreadth', 'X22.1_HomeRange_km2',
+         'X27.2_HuPopDen_Mean_n.km2', 'X28.1_Precip_Mean_mm',
+         'X28.2_Temp_Mean_01degC', 'X30.1_AET_Mean_mm')
+
+
+# replacing -999 with NA
+LH_subs[LH_subs == -999] <-  NA
+
+LH_noNA <- na.omit(LH_subs)
+names(LH_noNA) <- sub("^[^_]*_", "", names(LH_noNA))
+
+str(LH_noNA)
+```
+
+# Run PCA on environmental variables
+```{r run PCA, echo=TRUE}
+env_LH <- LH_noNA %>% 
+  select('HuPopDen_Mean_n.km2', 'Precip_Mean_mm',
+         'Temp_Mean_01degC', 'AET_Mean_mm')
+
+pca_env_SEAs <- rda(env_LH, scale = TRUE)
+```
+Since our variables (human population density, precipitation, temperature...) are in very different units, we use option 'scale=', so that all variables are now unitless and comparable.
+
+# Interpreting and visualizing results
+```{r interpret PCA, echo = TRUE, fig.align='center',out.height='60%', out.width='60%'}
+summary(pca_env_SEAs)
+
+# extract eigenvalues
+eigval <- pca_env_SEAs$CA$eig
+eigval[eigval > mean(eigval)]  
+
+bstick(pca_env_SEAs); eigval
+
+biplot(pca_env_SEAs, scaling = 'species')
+```
+So the first principal component should be sufficient but since we can easily plot in 2D, we will also extract the second one (and focus in interpretting on the pattern along the PC1).
+
+
+```{r nicer-plot, out.height='80%', out.width='80%', fig.align='center'}
+var_PCA <- scores(pca_env_SEAs, choices = c(1,2), scaling = 2, tidy = TRUE)
+
+LH_noNA$label <- rownames(LH_noNA)
+vis_PCA <- merge(subset(var_PCA, score =='sites'), subset(LH_noNA, select = c('label', 'bin')), by = 'label')
+
+spec_plot <- var_PCA %>% 
+  filter(score == 'species')
+ggplot(vis_PCA, aes(x = PC1, y = PC2)) +
+   geom_text(aes(label = bin), check_overlap = TRUE) +
+  geom_segment(data = spec_plot, 
+               aes(x=0, y=0, xend=PC1, yend=PC2), 
+               arrow = arrow(length=unit(.5, 'cm')),
+               col ='red') +
+  geom_text(data = spec_plot, aes(label = label),             nudge_y = -0.1, col = 'red') +
+theme_bw() +
+  geom_hline(yintercept = 0, lty = 3) +
+  geom_vline(xintercept = 0, lty = 3)
+```
+
+
+
+
