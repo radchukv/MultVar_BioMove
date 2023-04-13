@@ -1,0 +1,68 @@
+---
+title: "Solution for the exercise on RDA"
+author: "Radchuk Viktoriia"
+date: "2022-03-20"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(vegan)
+```
+
+# Read in the data
+```{r Anton data, echo = TRUE}
+dat <- read.csv(file = here::here('data', 'PlotLevel_16112021.csv'))
+
+str(dat)
+```
+
+Prepare and transform species data 
+```{r prep speciesDat, echo = TRUE, out.height= '60%', out.width= '60%', fig.align='center'}
+com <- subset(dat, select = c(MDA, MBR, MDS, NNO, NLE, ESE, PNA, PPY, VMU, PLA)) # PKU,  NLA removed
+
+# Transform species data, I use Chord transformation
+chord_com <- decostand(com, method =  'normalize')  
+```
+
+Prepare explanatory data
+```{r prep explanDat, echo = TRUE, out.height= '60%', out.width= '60%', fig.align='center'}
+for_plot <- subset(dat, select = c(clearcut, decid_10_40, decid_41_90,  
+                                   decid_More90, decid_More150))
+```
+
+
+# Run RDA
+```{r run RDA, echo = TRUE}
+rda_for_plot <- rda(chord_com ~., for_plot)
+summary(rda_for_plot)
+
+# assess the proportion of variation explained by the areas of forest in different ages
+RsquareAdj(rda_for_plot)
+```
+
+
+# Visualize RDA results
+```{r plot RDA, echo = TRUE,  out.height='80%', out.width='80%', fig.align='center'}
+plot(rda_for_plot, scaling = 1, main ='Scaling 1')
+plot(rda_for_plot, scaling = 2, main = 'Scaling 2')
+```
+
+
+# Test significance
+```{r sign, echo = TRUE}
+anova.cca(rda_for_plot, step = 1000)
+
+## for each axis and term
+anova.cca(rda_for_plot, by ='axis', step = 1000)
+anova.cca(rda_for_plot, by = 'margin', step = 1000)
+```
+
+
+
+
+
