@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Radchuk Viktoriia" />
+  <meta name="dcterms.date" content="2023-03-20" />
+  <title>Data types and transformations</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="03_Lecture_DataTypes_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="03_Lecture_DataTypes_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="../css/default.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="03_Lecture_DataTypes_files/header-attrs-2.20/header-attrs.js"></script>
+    <script src="03_Lecture_DataTypes_files/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <script src="03_Lecture_DataTypes_files/rglWebGL-binding-1.0.1/rglWebGL.js"></script>
+    <link href="03_Lecture_DataTypes_files/rglwidgetClass-1.0.1/rgl.css" rel="stylesheet" />
+    <script src="03_Lecture_DataTypes_files/rglwidgetClass-1.0.1/rglClass.min.js"></script>
+    <!--html_preserve--><script type = "text/plain" id = "rgl-vertex-shader">
+    #line 2 1
+    // File 1 is the vertex shader
+    #ifdef GL_ES
+    #ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+    #else
+    precision mediump float;
+    #endif
+    #endif
+
+    attribute vec3 aPos;
+    attribute vec4 aCol;
+    uniform mat4 mvMatrix;
+    uniform mat4 prMatrix;
+    varying vec4 vCol;
+    varying vec4 vPosition;
+
+    #ifdef NEEDS_VNORMAL
+    attribute vec3 aNorm;
+    uniform mat4 normMatrix;
+    varying vec4 vNormal;
+    #endif
+
+    #if defined(HAS_TEXTURE) || defined (IS_TEXT)
+    attribute vec2 aTexcoord;
+    varying vec2 vTexcoord;
+    #endif
+
+    #ifdef FIXED_SIZE
+    uniform vec3 textScale;
+    #endif
+
+    #ifdef FIXED_QUADS
+    attribute vec3 aOfs;
+    #endif
+
+    #ifdef IS_TWOSIDED
+    #ifdef HAS_NORMALS
+    varying float normz;
+    uniform mat4 invPrMatrix;
+    #else
+    attribute vec3 aPos1;
+    attribute vec3 aPos2;
+    varying float normz;
+    #endif
+    #endif // IS_TWOSIDED
+
+    #ifdef FAT_LINES
+    attribute vec3 aNext;
+    attribute vec2 aPoint;
+    varying vec2 vPoint;
+    varying float vLength;
+    uniform float uAspect;
+    uniform float uLwd;
+    #endif
+
+
+    void main(void) {
+      
+    #ifndef IS_BRUSH
+    #if defined(NCLIPPLANES) || !defined(FIXED_QUADS) || defined(HAS_FOG)
+      vPosition = mvMatrix * vec4(aPos, 1.);
+    #endif
+      
+    #ifndef FIXED_QUADS
+      gl_Position = prMatrix * vPosition;
+    #endif
+    #endif // !IS_BRUSH
+      
+    #ifdef IS_POINTS
+      gl_PointSize = POINTSIZE;
+    #endif
+      
+      vCol = aCol;
+      
+    #ifdef NEEDS_VNORMAL
+      vNormal = normMatrix * vec4(-aNorm, dot(aNorm, aPos));
+    #endif
+      
+    #ifdef IS_TWOSIDED
+    #ifdef HAS_NORMALS
+      /* normz should be calculated *after* projection */
+      normz = (invPrMatrix*vNormal).z;
+    #else
+      vec4 pos1 = prMatrix*(mvMatrix*vec4(aPos1, 1.));
+      pos1 = pos1/pos1.w - gl_Position/gl_Position.w;
+      vec4 pos2 = prMatrix*(mvMatrix*vec4(aPos2, 1.));
+      pos2 = pos2/pos2.w - gl_Position/gl_Position.w;
+      normz = pos1.x*pos2.y - pos1.y*pos2.x;
+    #endif
+    #endif // IS_TWOSIDED
+      
+    #ifdef NEEDS_VNORMAL
+      vNormal = vec4(normalize(vNormal.xyz/vNormal.w), 1);
+    #endif
+      
+    #if defined(HAS_TEXTURE) || defined(IS_TEXT)
+      vTexcoord = aTexcoord;
+    #endif
+      
+    #if defined(FIXED_SIZE) && !defined(ROTATING)
+      vec4 pos = prMatrix * mvMatrix * vec4(aPos, 1.);
+      pos = pos/pos.w;
+      gl_Position = pos + vec4(aOfs*textScale, 0.);
+    #endif
+      
+    #if defined(IS_SPRITES) && !defined(FIXED_SIZE)
+      vec4 pos = mvMatrix * vec4(aPos, 1.);
+      pos = pos/pos.w + vec4(aOfs,  0.);
+      gl_Position = prMatrix*pos;
+    #endif
+      
+    #ifdef FAT_LINES
+      /* This code was inspired by Matt Deslauriers' code in 
+       https://mattdesl.svbtle.com/drawing-lines-is-hard */
+      vec2 aspectVec = vec2(uAspect, 1.0);
+      mat4 projViewModel = prMatrix * mvMatrix;
+      vec4 currentProjected = projViewModel * vec4(aPos, 1.0);
+      currentProjected = currentProjected/currentProjected.w;
+      vec4 nextProjected = projViewModel * vec4(aNext, 1.0);
+      vec2 currentScreen = currentProjected.xy * aspectVec;
+      vec2 nextScreen = (nextProjected.xy / nextProjected.w) * aspectVec;
+      float len = uLwd;
+      vec2 dir = vec2(1.0, 0.0);
+      vPoint = aPoint;
+      vLength = length(nextScreen - currentScreen)/2.0;
+      vLength = vLength/(vLength + len);
+      if (vLength > 0.0) {
+        dir = normalize(nextScreen - currentScreen);
+      }
+      vec2 normal = vec2(-dir.y, dir.x);
+      dir.x /= uAspect;
+      normal.x /= uAspect;
+      vec4 offset = vec4(len*(normal*aPoint.x*aPoint.y - dir), 0.0, 0.0);
+      gl_Position = currentProjected + offset;
+    #endif
+      
+    #ifdef IS_BRUSH
+      gl_Position = vec4(aPos, 1.);
+    #endif
+    }
+    </script>
+    <script type = "text/plain" id = "rgl-fragment-shader">
+    #line 2 2
+    // File 2 is the fragment shader
+    #ifdef GL_ES
+    #ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+    #else
+    precision mediump float;
+    #endif
+    #endif
+    varying vec4 vCol; // carries alpha
+    varying vec4 vPosition;
+    #if defined(HAS_TEXTURE) || defined (IS_TEXT)
+    varying vec2 vTexcoord;
+    uniform sampler2D uSampler;
+    #endif
+
+    #ifdef HAS_FOG
+    uniform int uFogMode;
+    uniform vec3 uFogColor;
+    uniform vec4 uFogParms;
+    #endif
+
+    #if defined(IS_LIT) && !defined(FIXED_QUADS)
+    varying vec4 vNormal;
+    #endif
+
+    #if NCLIPPLANES > 0
+    uniform vec4 vClipplane[NCLIPPLANES];
+    #endif
+
+    #if NLIGHTS > 0
+    uniform mat4 mvMatrix;
+    #endif
+
+    #ifdef IS_LIT
+    uniform vec3 emission;
+    uniform float shininess;
+    #if NLIGHTS > 0
+    uniform vec3 ambient[NLIGHTS];
+    uniform vec3 specular[NLIGHTS]; // light*material
+    uniform vec3 diffuse[NLIGHTS];
+    uniform vec3 lightDir[NLIGHTS];
+    uniform bool viewpoint[NLIGHTS];
+    uniform bool finite[NLIGHTS];
+    #endif
+    #endif // IS_LIT
+
+    #ifdef IS_TWOSIDED
+    uniform bool front;
+    varying float normz;
+    #endif
+
+    #ifdef FAT_LINES
+    varying vec2 vPoint;
+    varying float vLength;
+    #endif
+
+    void main(void) {
+      vec4 fragColor;
+    #ifdef FAT_LINES
+      vec2 point = vPoint;
+      bool neg = point.y < 0.0;
+      point.y = neg ? (point.y + vLength)/(1.0 - vLength) :
+                     -(point.y - vLength)/(1.0 - vLength);
+    #if defined(IS_TRANSPARENT) && defined(IS_LINESTRIP)
+      if (neg && length(point) <= 1.0) discard;
+    #endif
+      point.y = min(point.y, 0.0);
+      if (length(point) > 1.0) discard;
+    #endif // FAT_LINES
+      
+    #ifdef ROUND_POINTS
+      vec2 coord = gl_PointCoord - vec2(0.5);
+      if (length(coord) > 0.5) discard;
+    #endif
+      
+    #if NCLIPPLANES > 0
+      for (int i = 0; i < NCLIPPLANES; i++)
+        if (dot(vPosition, vClipplane[i]) < 0.0) discard;
+    #endif
+        
+    #ifdef FIXED_QUADS
+        vec3 n = vec3(0., 0., 1.);
+    #elif defined(IS_LIT)
+        vec3 n = normalize(vNormal.xyz);
+    #endif
+        
+    #ifdef IS_TWOSIDED
+        if ((normz <= 0.) != front) discard;
+    #endif
+        
+    #ifdef IS_LIT
+        vec3 eye = normalize(-vPosition.xyz/vPosition.w);
+        vec3 lightdir;
+        vec4 colDiff;
+        vec3 halfVec;
+        vec4 lighteffect = vec4(emission, 0.);
+        vec3 col;
+        float nDotL;
+    #ifdef FIXED_QUADS
+        n = -faceforward(n, n, eye);
+    #endif
+        
+    #if NLIGHTS > 0
+        for (int i=0;i<NLIGHTS;i++) {
+          colDiff = vec4(vCol.rgb * diffuse[i], vCol.a);
+          lightdir = lightDir[i];
+          if (!viewpoint[i])
+            lightdir = (mvMatrix * vec4(lightdir, 1.)).xyz;
+          if (!finite[i]) {
+            halfVec = normalize(lightdir + eye);
+          } else {
+            lightdir = normalize(lightdir - vPosition.xyz/vPosition.w);
+            halfVec = normalize(lightdir + eye);
+          }
+          col = ambient[i];
+          nDotL = dot(n, lightdir);
+          col = col + max(nDotL, 0.) * colDiff.rgb;
+          col = col + pow(max(dot(halfVec, n), 0.), shininess) * specular[i];
+          lighteffect = lighteffect + vec4(col, colDiff.a);
+        }
+    #endif
+        
+    #else // not IS_LIT
+        vec4 colDiff = vCol;
+        vec4 lighteffect = colDiff;
+    #endif
+        
+    #ifdef IS_TEXT
+        vec4 textureColor = lighteffect*texture2D(uSampler, vTexcoord);
+    #endif
+        
+    #ifdef HAS_TEXTURE
+    #ifdef TEXTURE_rgb
+        vec4 textureColor = lighteffect*vec4(texture2D(uSampler, vTexcoord).rgb, 1.);
+    #endif
+        
+    #ifdef TEXTURE_rgba
+        vec4 textureColor = lighteffect*texture2D(uSampler, vTexcoord);
+    #endif
+        
+    #ifdef TEXTURE_alpha
+        vec4 textureColor = texture2D(uSampler, vTexcoord);
+        float luminance = dot(vec3(1.,1.,1.), textureColor.rgb)/3.;
+        textureColor =  vec4(lighteffect.rgb, lighteffect.a*luminance);
+    #endif
+        
+    #ifdef TEXTURE_luminance
+        vec4 textureColor = vec4(lighteffect.rgb*dot(texture2D(uSampler, vTexcoord).rgb, vec3(1.,1.,1.))/3., lighteffect.a);
+    #endif
+        
+    #ifdef TEXTURE_luminance_alpha
+        vec4 textureColor = texture2D(uSampler, vTexcoord);
+        float luminance = dot(vec3(1.,1.,1.),textureColor.rgb)/3.;
+        textureColor = vec4(lighteffect.rgb*luminance, lighteffect.a*textureColor.a);
+    #endif
+        
+        fragColor = textureColor;
+
+    #elif defined(IS_TEXT)
+        if (textureColor.a < 0.1)
+          discard;
+        else
+          fragColor = textureColor;
+    #else
+        fragColor = lighteffect;
+    #endif // HAS_TEXTURE
+        
+    #ifdef HAS_FOG
+        // uFogParms elements: x = near, y = far, z = fogscale, w = (1-sin(FOV/2))/(1+sin(FOV/2))
+        // In Exp and Exp2: use density = density/far
+        // fogF will be the proportion of fog
+        // Initialize it to the linear value
+        float fogF;
+        if (uFogMode > 0) {
+          fogF = (uFogParms.y - vPosition.z/vPosition.w)/(uFogParms.y - uFogParms.x);
+          if (uFogMode > 1)
+            fogF = mix(uFogParms.w, 1.0, fogF);
+          fogF = fogF*uFogParms.z;
+          if (uFogMode == 2)
+            fogF = 1.0 - exp(-fogF);
+          // Docs are wrong: use (density*c)^2, not density*c^2
+          // https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/mesa/swrast/s_fog.c#L58
+          else if (uFogMode == 3)
+            fogF = 1.0 - exp(-fogF*fogF);
+          fogF = clamp(fogF, 0.0, 1.0);
+          gl_FragColor = vec4(mix(fragColor.rgb, uFogColor, fogF), fragColor.a);
+        } else gl_FragColor = fragColor;
+    #else
+        gl_FragColor = fragColor;
+    #endif // HAS_FOG
+        
+    }
+    </script><!--/html_preserve-->
+    <script src="03_Lecture_DataTypes_files/CanvasMatrix4-1.0.1/CanvasMatrix.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Data types and transformations</h1>
+    <h2 class="author">Radchuk Viktoriia</h2>
+    <h3 class="date">2023-03-20</h3>
+</section>
+
+<section id="recall-the-data-structure"
+class="title-slide slide level1">
+<h1>Recall the data structure</h1>
+<p style="text-align:center;">
+<img src="img/X_YMatrices.png" height = "450"/>
+</p>
+</section>
+
+<section id="associations" class="title-slide slide level1">
+<h1>Associations</h1>
+<ol type="1">
+<li class="fragment">Between objects (sites, samples)</li>
+<li class="fragment">Between descriptors (explanatory variables and
+response variables OR among variables)</li>
+</ol>
+</section>
+
+<section id="associations-between-descriptors"
+class="title-slide slide level1">
+<h1>Associations between descriptors</h1>
+<p><img src="03_Lecture_DataTypes_files/figure-revealjs/Correl-1.png" width="90%" height="90%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="correlations-between-descriptors"
+class="title-slide slide level1">
+<h1>Correlations between descriptors</h1>
+<div id="rgl52430" style="width:768px;height:576px;" class="rglWebGL html-widget "></div>
+<script type="application/json" data-for="rgl52430">{"x":{"material":{"color":"#000000","alpha":1,"lit":true,"ambient":"#000000","specular":"#FFFFFF","emission":"#000000","shininess":50,"smooth":true,"front":"filled","back":"filled","size":3,"lwd":1,"fog":true,"point_antialias":false,"line_antialias":false,"texture":null,"textype":"rgb","texmipmap":false,"texminfilter":"linear","texmagfilter":"linear","texenvmap":false,"depth_mask":true,"depth_test":"less","isTransparent":false,"polygon_offset":[0,0],"margin":"","floating":false,"tag":"","blend":["src_alpha","one_minus_src_alpha"]},"rootSubscene":1,"objects":{"7":{"id":7,"type":"points","material":{"lit":false},"vertices":"0","colors":"1","centers":"2","ignoreExtent":false,"flags":34816},"9":{"id":9,"type":"text","material":{"lit":false,"margin":0,"floating":true,"edge":[0,1,1]},"vertices":"3","colors":"4","texts":[["Temperature"]],"cex":[[1]],"adj":[[0.5,0.5,0.5]],"centers":"5","family":[["sans"]],"font":[[1]],"ignoreExtent":true,"flags":33808},"10":{"id":10,"type":"text","material":{"lit":false,"margin":1,"floating":true,"edge":[1,1,1]},"vertices":"6","colors":"7","texts":[["Sunshine"]],"cex":[[1]],"adj":[[0.5,0.5,0.5]],"centers":"8","family":[["sans"]],"font":[[1]],"ignoreExtent":true,"flags":33808},"11":{"id":11,"type":"text","material":{"lit":false,"margin":2,"floating":true,"edge":[1,1,1]},"vertices":"9","colors":"10","texts":[["AET"]],"cex":[[1]],"adj":[[0.5,0.5,0.5]],"centers":"11","family":[["sans"]],"font":[[1]],"ignoreExtent":true,"flags":33808},"5":{"id":5,"type":"light","vertices":[[0,0,1]],"colors":[[1,1,1,1],[1,1,1,1],[1,1,1,1]],"viewpoint":true,"finite":false},"4":{"id":4,"type":"background","material":{},"colors":"12","centers":"13","sphere":false,"fogtype":"none","fogscale":1,"flags":32768},"6":{"id":6,"type":"background","material":{"lit":false,"back":"lines"},"colors":"14","centers":"15","sphere":false,"fogtype":"none","fogscale":1,"flags":32768},"8":{"id":8,"type":"bboxdeco","material":{"front":"lines","back":"lines"},"vertices":"16","colors":"17","axes":{"mode":["pretty","pretty","pretty"],"step":[2,2,2],"nticks":[5,5,5],"marklen":[15,15,15],"expand":[1.02999997138977,1.02999997138977,1.02999997138977]},"draw_front":true,"flags":32769},"1":{"id":1,"type":"subscene","par3d":{"antialias":8,"FOV":30,"ignoreExtent":false,"listeners":1,"mouseMode":{"none":"none","left":"trackball","right":"zoom","middle":"fov","wheel":"pull"},"observer":[0,0,43.084415435791],"modelMatrix":[[0.956679284572601,0,0,-1.08826327323914],[0,0.370876997709274,0.914028227329254,-1.46738362312317],[0,-1.01897621154785,0.332679092884064,-42.5607719421387],[0,0,0,1]],"projMatrix":[[3.73205065727234,0,0,0],[0,3.73205065727234,0,0],[0,0,-3.86370372772217,-155.314346313477],[0,0,-1,0]],"skipRedraw":false,"userMatrix":[[1,0,0,0],[0,0.342020143325668,0.939692620785909,0],[0,-0.939692620785909,0.342020143325668,0],[0,0,0,1]],"userProjection":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],"scale":[0.956679284572601,1.08437180519104,0.972688555717468],"viewport":{"x":0,"y":0,"width":1,"height":1},"zoom":1,"bbox":[-4.17530155181885,6.45038652420044,-3.77061438560486,5.60382318496704,-3.99192023277283,6.45888185501099],"windowRect":[0,0,256,256],"family":"sans","font":1,"cex":1,"useFreeType":true,"fontname":"NULL","maxClipPlanes":2147483647,"glVersion":"NA","activeSubscene":0},"embeddings":{"viewport":"replace","projection":"replace","model":"replace","mouse":"replace"},"objects":[6,8,7,9,10,11,5],"subscenes":[],"flags":36113}},"crosstalk":{"key":[],"group":[],"id":[],"options":[]},"width":768,"height":576,"buffer":{"accessors":[{"bufferView":0,"componentType":5126,"count":500,"type":"VEC3"},{"bufferView":1,"componentType":5121,"count":500,"type":"VEC4","normalized":true},{"bufferView":2,"componentType":5126,"count":500,"type":"VEC3"},{"bufferView":3,"componentType":5126,"count":1,"type":"VEC3"},{"bufferView":4,"componentType":5121,"count":1,"type":"VEC4"},{"bufferView":5,"componentType":5126,"count":1,"type":"VEC3"},{"bufferView":6,"componentType":5126,"count":1,"type":"VEC3"},{"bufferView":7,"componentType":5121,"count":1,"type":"VEC4"},{"bufferView":8,"componentType":5126,"count":1,"type":"VEC3"},{"bufferView":9,"componentType":5126,"count":1,"type":"VEC3"},{"bufferView":10,"componentType":5121,"count":1,"type":"VEC4"},{"bufferView":11,"componentType":5126,"count":1,"type":"VEC3"},{"bufferView":12,"componentType":5126,"count":1,"type":"VEC4"},{"bufferView":13,"componentType":5121,"count":1,"type":"VEC3"},{"bufferView":14,"componentType":5121,"count":1,"type":"VEC4"},{"bufferView":15,"componentType":5121,"count":1,"type":"VEC3"},{"bufferView":16,"componentType":5126,"count":15,"type":"VEC3"},{"bufferView":17,"componentType":5121,"count":1,"type":"VEC4"}],"bufferViews":[{"buffer":0,"byteLength":6000,"byteOffset":0},{"buffer":0,"byteLength":2000,"byteOffset":6000},{"buffer":0,"byteLength":6000,"byteOffset":8000},{"buffer":0,"byteLength":12,"byteOffset":14000},{"buffer":0,"byteLength":4,"byteOffset":14012},{"buffer":0,"byteLength":12,"byteOffset":14016},{"buffer":0,"byteLength":12,"byteOffset":14028},{"buffer":0,"byteLength":4,"byteOffset":14040},{"buffer":0,"byteLength":12,"byteOffset":14044},{"buffer":0,"byteLength":12,"byteOffset":14056},{"buffer":0,"byteLength":4,"byteOffset":14068},{"buffer":0,"byteLength":12,"byteOffset":14072},{"buffer":0,"byteLength":16,"byteOffset":14084},{"buffer":0,"byteLength":3,"byteOffset":14100},{"buffer":0,"byteLength":4,"byteOffset":14103},{"buffer":0,"byteLength":3,"byteOffset":14107},{"buffer":0,"byteLength":180,"byteOffset":14112},{"buffer":0,"byteLength":4,"byteOffset":14292}],"buffers":[{"byteLength":14296,"bytes":"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\nsodkQGuAjD+EuO09HOxjPwfJ5b9voxTA2+aKQEflSkBHLVVAr3AZQGo0yb/Gji+/LoTOPrU8\nOMArhcW/ApUlQEabYECpDldAbYGmvogTwb+y2AvAt2cKQCr+5T8Gwas+CHPlv+LAMsC1B1nA\nqKc4P8Kd7j6brOW93FLdv7zGrb7kDTm/D/suPwh8Tj4SSbY/VpHIP0Wj+L4Sl40/FcNJP9sR\nyL1m5ne+bhszP1lx5b3q3vQ+CSGmP50Ztj+hvao+i7gNQKNcDb58xps+CmoRvnybxD6y1R/A\n4jOrP0ZrXj6EUw1Acy4bQNlA1D8SzAo/6PNpQBaJCkCsis4/uO1yP53Q1r/zeK2+B6n0P/DG\nvD/hFYW+UXTxP9iIBT/QcsU+ssdMP2zwSD873Ng+AXT4P7pZKkBNJWY/iawwQFC4yD/SAR9A\nqJhhv+xEUr9HupK/6L4GQMDMKECjBgtAcaNIQBAP0zwgHdY/pwdaPzv/uj7b/s++SVqgP2Zr\nJTxvMr2+QuZ8QEcmhz/b5yNAD8bZP6eOyD8vtGs/gjkNQAfQST+IjYQ/eFANQL9X+L31HiA9\nKrjyP90LfL+s/KI+xe6Vv6qDIcB67Ie/EMekP737Mz0So42/MeERQERSH0DtHTpAmAUaQMU4\nuj+IvBJAzP8A/3//AP//5QD//////8z/AP//5QD/zP8A/8z/AP8A5Rn/M/8A/3//AP/M/wD/\n/+UA///lAP8AmWX/f/8A//+YAP/M/wD/AEyy//+YAP//mAD//+UA///lAP8z/wD/AJll/3//\nAP9//wD/f/8A/8z/AP8A5Rn//+UA/3//AP9//wD/M/8A//+YAP9//wD/f/8A///lAP/M/wD/\n/5gA/3//AP//5QD/f/8A/wDlGf9//wD/zP8A/wDlGf9//wD/M/8A/zP/AP9//wD/M/8A/8z/\nAP//5QD/f/8A/wCZZf8ATLL//+UA///lAP9//wD/f/8A/3//AP/M/wD/AOUZ///lAP/M/wD/\n/+UA/8z/AP8z/wD/f/8A/3//AP8z/wD/f/8A/zP/AP//5QD/zP8A//+YAP/M/wD/AOUZ/zP/\nAP9//wD//+UA/wDlGf8z/wD//5gA/wDlGf/M/wD/M/8A/wCZZf//TAD/zP8A//9MAP8AmWX/\n/5gA///lAP/M/wD//+UA/3//AP8z/wD/AOUZ/zP/AP/M/wD/zP8A/3//AP/M/wD//+UA///l\nAP8A5Rn//+UA/8z/AP/M/wD/M/8A/zP/AP/M/wD/zP8A/8z/AP8z/wD/M/8A///lAP/M/wD/\nAJll//+YAP9//wD/AOUZ//+YAP8z/wD/f/8A/3//AP9//wD//+UA/8z/AP9//wD/zP8A/8z/\nAP//mAD/AOUZ/3//AP/M/wD/M/8A///lAP9//wD/zP8A//+YAP9//wD//+UA/wDlGf/M/wD/\nf/8A///lAP8A5Rn/AOUZ///lAP//TAD/f/8A//////8z/wD//+UA/3//AP8z/wD/f/8A/zP/\nAP9//wD//+UA///lAP8A5Rn/f/8A/zP/AP8AmWX/AEyy//+YAP9//wD//5gA/8z/AP9//wD/\nM/8A/zP/AP9//wD//5gA/3//AP8A5Rn/M/8A/3//AP8A5Rn/AOUZ//+YAP8z/wD//+UA/8z/\nAP//5QD/zP8A/8z/AP8z/wD//5gA/3//AP8A5Rn/AOUZ/3//AP/M/wD/f/8A/8z/AP8A5Rn/\nAOUZ/zP/AP//TAD//+UA/zP/AP//mAD/AOUZ/3//AP//////zP8A/3//AP9//wD//0wA/3//\nAP/M/wD/f/8A/8z/AP8z/wD/M/8A///lAP8z/wD/f/8A/8z/AP/M/wD//+UA/wDlGf9//wD/\nf/8A/zP/AP//5QD/f/8A///lAP8z/wD/f/8A/3//AP9//wD/f/8A///lAP/M/wD/zP8A///l\nAP//5QD/f/8A/3//AP//5QD/zP8A/8z/AP//5QD//+UA///lAP/M/wD/M/8A/wDlGf//mAD/\nzP8A/wDlGf8z/wD/zP8A/3//AP/M/wD//5gA///lAP//mAD/AOUZ/8z/AP8z/wD//+UA/3//\nAP/M/wD//+UA/zP/AP//5QD/zP8A/zP/AP/M/wD//+UA/zP/AP/M/wD/zP8A/8z/AP8z/wD/\n/5gA/zP/AP//5QD/zP8A/3//AP//5QD//0wA//+YAP/M/wD/f/8A/wDlGf8A5Rn/zP8A/3//\nAP8A5Rn//+UA/wDlGf/M/wD/f/8A//9MAP//5QD/f/8A/8z/AP/M/wD/M/8A//+YAP/M/wD/\nAEyy/8z/AP/M/wD/f/8A/wDlGf//mAD/zP8A/zP/AP9//wD/M/8A/zP/AP8z/wD//+UA/wDl\nGf9//wD/AOUZ/8z/AP//5QD/zP8A/3//AP9//wD/AJll///lAP8z/wD//5gA/wDlGf9//wD/\nM/8A/3//AP8z/wD/f/8A/zP/AP8z/wD/zP8A/wDlGf//mAD/f/8A//9MAP9//wD/f/8A/8z/\nAP/M/wD/AJll/8z/AP//5QD/M/8A//9MAP//5QD/M/8A/zP/AP//5QD/f/8A//+YAP//mAD/\nAOUZ//+YAP//5QD/zP8A/3//AP8ATLL/zP8A/zP/AP8z/wD/M/8A///lAP//mAD/f/8A/8z/\nAP/M/wD//+UA/zP/AP9//wD//5gA/3//AP9//wD/f/8A/zP/AP9//wD//+UA/3//AP8z/wD/\n/0wA/wDlGf//5QD/zP8A/zP/AP//TAD/zP8A///lAP8z/wD//5gA/3//AP8z/wD/f/8A/8z/\nAP//5QD/zP8A//+YAP9//wD/f/8A/zP/AP//5QD/f/8A/zP/AP//5QD//+UA//+YAP8ATLL/\nAOUZ//9MAP8AmWX/AOUZ//9MAP9//wD/M/8A/zP/AP9//wD//+UA/8z/AP8z/wD/AOUZ//+Y\nAP9//wD/zP8A/wCZZf//5QD/f/8A/wDlGf9//wD/zP8A/wCZZf8A5Rn/zP8A/8z/AP9//wD/\nM/8A//+YAP8AmWX//+UA//9MAP8z/wD/zP8A/zP/AP8z/wD//5gA/3//AP/M/wD/f/8A/3//\nAP8AmWX//+UA/zP/AP//mAD/zP8A/zP/AP/M/wD/AOUZ/8z/AP8AmWX/M/8A/wCZZf8z/wD/\nf/8A/zP/AP8z/wD/f/8A/8z/AP8A5Rn/f/8A/8z/AP//5QD/M/8A/3//AP9//wD/M/8A/3//\nAP/M/wD/AOUZ/8z/AP//5QD/M/8A/3//AP//5QD/f/8A/8z/AP/M/wD/f/8A/wCZZf9//wD/\nzP8A/8z/AP9xjAdADaNSP5AODz9L8ZQ/9hPpv2Z20b5Pxk9A+2ktQDt6zT9SvMtAochpQPzo\nIkCO/zFAZemkP5ZViT8noXRAlBteQL7vhUAKkyRA61bZPy3IAkAtoAtAtYKxPz/ofz27gpq9\nZ5DcP3BXNz+ygvQ+EAWaP/mSgj4w4bs/MGsMP2HkHD8UDjRAbOUNP7U61D9DKVlAiPhrP2db\nCUA8kE1AAJA4QE2jKEA9LYG/tem+vsuPxb/8brY/jxEYPwaSQ0C/z49AXC4dQMneJkAY0DFA\nPe/fP3pqCECTbi/Av1FxwHPlWMCfrIZAZ7oVQL9Ddz2Sxo1A1w2CQFRimUCvF1BAbrs7P2n+\n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"}]},"context":{"shiny":false,"rmarkdown":"revealjs::revealjs_presentation"},"vertexShader":"#line 2 1\n// File 1 is the vertex shader\n#ifdef GL_ES\n#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n#endif\n\nattribute vec3 aPos;\nattribute vec4 aCol;\nuniform mat4 mvMatrix;\nuniform mat4 prMatrix;\nvarying vec4 vCol;\nvarying vec4 vPosition;\n\n#ifdef NEEDS_VNORMAL\nattribute vec3 aNorm;\nuniform mat4 normMatrix;\nvarying vec4 vNormal;\n#endif\n\n#if defined(HAS_TEXTURE) || defined (IS_TEXT)\nattribute vec2 aTexcoord;\nvarying vec2 vTexcoord;\n#endif\n\n#ifdef FIXED_SIZE\nuniform vec3 textScale;\n#endif\n\n#ifdef FIXED_QUADS\nattribute vec3 aOfs;\n#endif\n\n#ifdef IS_TWOSIDED\n#ifdef HAS_NORMALS\nvarying float normz;\nuniform mat4 invPrMatrix;\n#else\nattribute vec3 aPos1;\nattribute vec3 aPos2;\nvarying float normz;\n#endif\n#endif // IS_TWOSIDED\n\n#ifdef FAT_LINES\nattribute vec3 aNext;\nattribute vec2 aPoint;\nvarying vec2 vPoint;\nvarying float vLength;\nuniform float uAspect;\nuniform float uLwd;\n#endif\n\n\nvoid main(void) {\n  \n#ifndef IS_BRUSH\n#if defined(NCLIPPLANES) || !defined(FIXED_QUADS) || defined(HAS_FOG)\n  vPosition = mvMatrix * vec4(aPos, 1.);\n#endif\n  \n#ifndef FIXED_QUADS\n  gl_Position = prMatrix * vPosition;\n#endif\n#endif // !IS_BRUSH\n  \n#ifdef IS_POINTS\n  gl_PointSize = POINTSIZE;\n#endif\n  \n  vCol = aCol;\n  \n#ifdef NEEDS_VNORMAL\n  vNormal = normMatrix * vec4(-aNorm, dot(aNorm, aPos));\n#endif\n  \n#ifdef IS_TWOSIDED\n#ifdef HAS_NORMALS\n  /* normz should be calculated *after* projection */\n  normz = (invPrMatrix*vNormal).z;\n#else\n  vec4 pos1 = prMatrix*(mvMatrix*vec4(aPos1, 1.));\n  pos1 = pos1/pos1.w - gl_Position/gl_Position.w;\n  vec4 pos2 = prMatrix*(mvMatrix*vec4(aPos2, 1.));\n  pos2 = pos2/pos2.w - gl_Position/gl_Position.w;\n  normz = pos1.x*pos2.y - pos1.y*pos2.x;\n#endif\n#endif // IS_TWOSIDED\n  \n#ifdef NEEDS_VNORMAL\n  vNormal = vec4(normalize(vNormal.xyz/vNormal.w), 1);\n#endif\n  \n#if defined(HAS_TEXTURE) || defined(IS_TEXT)\n  vTexcoord = aTexcoord;\n#endif\n  \n#if defined(FIXED_SIZE) && !defined(ROTATING)\n  vec4 pos = prMatrix * mvMatrix * vec4(aPos, 1.);\n  pos = pos/pos.w;\n  gl_Position = pos + vec4(aOfs*textScale, 0.);\n#endif\n  \n#if defined(IS_SPRITES) && !defined(FIXED_SIZE)\n  vec4 pos = mvMatrix * vec4(aPos, 1.);\n  pos = pos/pos.w + vec4(aOfs,  0.);\n  gl_Position = prMatrix*pos;\n#endif\n  \n#ifdef FAT_LINES\n  /* This code was inspired by Matt Deslauriers' code in \n   https://mattdesl.svbtle.com/drawing-lines-is-hard */\n  vec2 aspectVec = vec2(uAspect, 1.0);\n  mat4 projViewModel = prMatrix * mvMatrix;\n  vec4 currentProjected = projViewModel * vec4(aPos, 1.0);\n  currentProjected = currentProjected/currentProjected.w;\n  vec4 nextProjected = projViewModel * vec4(aNext, 1.0);\n  vec2 currentScreen = currentProjected.xy * aspectVec;\n  vec2 nextScreen = (nextProjected.xy / nextProjected.w) * aspectVec;\n  float len = uLwd;\n  vec2 dir = vec2(1.0, 0.0);\n  vPoint = aPoint;\n  vLength = length(nextScreen - currentScreen)/2.0;\n  vLength = vLength/(vLength + len);\n  if (vLength > 0.0) {\n    dir = normalize(nextScreen - currentScreen);\n  }\n  vec2 normal = vec2(-dir.y, dir.x);\n  dir.x /= uAspect;\n  normal.x /= uAspect;\n  vec4 offset = vec4(len*(normal*aPoint.x*aPoint.y - dir), 0.0, 0.0);\n  gl_Position = currentProjected + offset;\n#endif\n  \n#ifdef IS_BRUSH\n  gl_Position = vec4(aPos, 1.);\n#endif\n}","fragmentShader":"#line 2 2\n// File 2 is the fragment shader\n#ifdef GL_ES\n#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n#endif\nvarying vec4 vCol; // carries alpha\nvarying vec4 vPosition;\n#if defined(HAS_TEXTURE) || defined (IS_TEXT)\nvarying vec2 vTexcoord;\nuniform sampler2D uSampler;\n#endif\n\n#ifdef HAS_FOG\nuniform int uFogMode;\nuniform vec3 uFogColor;\nuniform vec4 uFogParms;\n#endif\n\n#if defined(IS_LIT) && !defined(FIXED_QUADS)\nvarying vec4 vNormal;\n#endif\n\n#if NCLIPPLANES > 0\nuniform vec4 vClipplane[NCLIPPLANES];\n#endif\n\n#if NLIGHTS > 0\nuniform mat4 mvMatrix;\n#endif\n\n#ifdef IS_LIT\nuniform vec3 emission;\nuniform float shininess;\n#if NLIGHTS > 0\nuniform vec3 ambient[NLIGHTS];\nuniform vec3 specular[NLIGHTS]; // light*material\nuniform vec3 diffuse[NLIGHTS];\nuniform vec3 lightDir[NLIGHTS];\nuniform bool viewpoint[NLIGHTS];\nuniform bool finite[NLIGHTS];\n#endif\n#endif // IS_LIT\n\n#ifdef IS_TWOSIDED\nuniform bool front;\nvarying float normz;\n#endif\n\n#ifdef FAT_LINES\nvarying vec2 vPoint;\nvarying float vLength;\n#endif\n\nvoid main(void) {\n  vec4 fragColor;\n#ifdef FAT_LINES\n  vec2 point = vPoint;\n  bool neg = point.y < 0.0;\n  point.y = neg ? (point.y + vLength)/(1.0 - vLength) :\n                 -(point.y - vLength)/(1.0 - vLength);\n#if defined(IS_TRANSPARENT) && defined(IS_LINESTRIP)\n  if (neg && length(point) <= 1.0) discard;\n#endif\n  point.y = min(point.y, 0.0);\n  if (length(point) > 1.0) discard;\n#endif // FAT_LINES\n  \n#ifdef ROUND_POINTS\n  vec2 coord = gl_PointCoord - vec2(0.5);\n  if (length(coord) > 0.5) discard;\n#endif\n  \n#if NCLIPPLANES > 0\n  for (int i = 0; i < NCLIPPLANES; i++)\n    if (dot(vPosition, vClipplane[i]) < 0.0) discard;\n#endif\n    \n#ifdef FIXED_QUADS\n    vec3 n = vec3(0., 0., 1.);\n#elif defined(IS_LIT)\n    vec3 n = normalize(vNormal.xyz);\n#endif\n    \n#ifdef IS_TWOSIDED\n    if ((normz <= 0.) != front) discard;\n#endif\n    \n#ifdef IS_LIT\n    vec3 eye = normalize(-vPosition.xyz/vPosition.w);\n    vec3 lightdir;\n    vec4 colDiff;\n    vec3 halfVec;\n    vec4 lighteffect = vec4(emission, 0.);\n    vec3 col;\n    float nDotL;\n#ifdef FIXED_QUADS\n    n = -faceforward(n, n, eye);\n#endif\n    \n#if NLIGHTS > 0\n    for (int i=0;i<NLIGHTS;i++) {\n      colDiff = vec4(vCol.rgb * diffuse[i], vCol.a);\n      lightdir = lightDir[i];\n      if (!viewpoint[i])\n        lightdir = (mvMatrix * vec4(lightdir, 1.)).xyz;\n      if (!finite[i]) {\n        halfVec = normalize(lightdir + eye);\n      } else {\n        lightdir = normalize(lightdir - vPosition.xyz/vPosition.w);\n        halfVec = normalize(lightdir + eye);\n      }\n      col = ambient[i];\n      nDotL = dot(n, lightdir);\n      col = col + max(nDotL, 0.) * colDiff.rgb;\n      col = col + pow(max(dot(halfVec, n), 0.), shininess) * specular[i];\n      lighteffect = lighteffect + vec4(col, colDiff.a);\n    }\n#endif\n    \n#else // not IS_LIT\n    vec4 colDiff = vCol;\n    vec4 lighteffect = colDiff;\n#endif\n    \n#ifdef IS_TEXT\n    vec4 textureColor = lighteffect*texture2D(uSampler, vTexcoord);\n#endif\n    \n#ifdef HAS_TEXTURE\n#ifdef TEXTURE_rgb\n    vec4 textureColor = lighteffect*vec4(texture2D(uSampler, vTexcoord).rgb, 1.);\n#endif\n    \n#ifdef TEXTURE_rgba\n    vec4 textureColor = lighteffect*texture2D(uSampler, vTexcoord);\n#endif\n    \n#ifdef TEXTURE_alpha\n    vec4 textureColor = texture2D(uSampler, vTexcoord);\n    float luminance = dot(vec3(1.,1.,1.), textureColor.rgb)/3.;\n    textureColor =  vec4(lighteffect.rgb, lighteffect.a*luminance);\n#endif\n    \n#ifdef TEXTURE_luminance\n    vec4 textureColor = vec4(lighteffect.rgb*dot(texture2D(uSampler, vTexcoord).rgb, vec3(1.,1.,1.))/3., lighteffect.a);\n#endif\n    \n#ifdef TEXTURE_luminance_alpha\n    vec4 textureColor = texture2D(uSampler, vTexcoord);\n    float luminance = dot(vec3(1.,1.,1.),textureColor.rgb)/3.;\n    textureColor = vec4(lighteffect.rgb*luminance, lighteffect.a*textureColor.a);\n#endif\n    \n    fragColor = textureColor;\n\n#elif defined(IS_TEXT)\n    if (textureColor.a < 0.1)\n      discard;\n    else\n      fragColor = textureColor;\n#else\n    fragColor = lighteffect;\n#endif // HAS_TEXTURE\n    \n#ifdef HAS_FOG\n    // uFogParms elements: x = near, y = far, z = fogscale, w = (1-sin(FOV/2))/(1+sin(FOV/2))\n    // In Exp and Exp2: use density = density/far\n    // fogF will be the proportion of fog\n    // Initialize it to the linear value\n    float fogF;\n    if (uFogMode > 0) {\n      fogF = (uFogParms.y - vPosition.z/vPosition.w)/(uFogParms.y - uFogParms.x);\n      if (uFogMode > 1)\n        fogF = mix(uFogParms.w, 1.0, fogF);\n      fogF = fogF*uFogParms.z;\n      if (uFogMode == 2)\n        fogF = 1.0 - exp(-fogF);\n      // Docs are wrong: use (density*c)^2, not density*c^2\n      // https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/mesa/swrast/s_fog.c#L58\n      else if (uFogMode == 3)\n        fogF = 1.0 - exp(-fogF*fogF);\n      fogF = clamp(fogF, 0.0, 1.0);\n      gl_FragColor = vec4(mix(fragColor.rgb, uFogColor, fogF), fragColor.a);\n    } else gl_FragColor = fragColor;\n#else\n    gl_FragColor = fragColor;\n#endif // HAS_FOG\n    \n}","players":[],"webGLoptions":{"preserveDrawingBuffer":true}},"evals":[],"jsHooks":[]}</script>
+<p>So, each descriptor is one dimension and to investigate associations
+among them we take correlations or covariances.</p>
+</section>
+
+<section id="association-between-objects"
+class="title-slide slide level1">
+<h1>Association between objects</h1>
+<p>Dissimilarity between object pairs: Euclidean distance, Jaccard
+dissimilarity, Bray-Curtis dissimilarity</p>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Site_rural.png" height = "250"/>
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src="img/Site_urban.png" height = "250"/>
+</p>
+</div>
+<p>How to measure distance between these two sites, that is distances
+among sites in community composition?</p>
+</section>
+
+<section id="issues-with-species-data" class="title-slide slide level1">
+<h1>Issues with species data</h1>
+<ul>
+<li class="fragment">Double zeros: absences of species in both sites
+cannot be interpreted the same way as presences of the species in both
+sites.<br />
+</li>
+<li class="fragment">Absence can be due to environment being unsuitable,
+due to detection error (species present but not observed) or non-regular
+distribution of species across the study sites.<br />
+</li>
+<li class="fragment">But: number of zeros increases as we observe larger
+number of sites and more species-rich communities (higher number of rare
+species usually).<br />
+</li>
+<li class="fragment">This also has more technical downside as the
+distribution of species abundances deviate strongly from normal.</li>
+</ul>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Site_rural.png" height = "200"/>
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src="img/Site_urban.png" height = "200"/>
+</p>
+</div>
+</section>
+
+<section id="possible-ways-to-deal-with-this"
+class="title-slide slide level1">
+<h1>Possible ways to deal with this</h1>
+<ul>
+<li class="fragment">First transform species data so as to approximate
+quantitative data, and then apply multivariate methods used for such
+quantitative data (e.g. PCA and RDA).<br />
+</li>
+<li class="fragment">Use community dissimilarity metrics that measure
+how different communities are in their composition (and are suited to
+species data) and apply respective multivariate methods to those data
+(e.g. PCoA).</li>
+</ul>
+</section>
+
+<section id="transformation-of-community-data"
+class="title-slide slide level1">
+<h1>Transformation of community data</h1>
+<ul>
+<li class="fragment"><strong>Hellinger transformation</strong>: convert
+species abundance to relative (divide by total abundance in the site)
+and then take a square root.<br />
+</li>
+<li class="fragment"><strong>Chord transformation</strong>: Hellinger
+transformation is applied to squared abundance data. This leads to the
+site vectors being normalised to 1.<br />
+</li>
+<li class="fragment"><strong><span class="math inline">\(\chi^2\)</span>
+transformation</strong>: the relative abundance of the species in the
+site is used, but it is also adjusted for the square root of matrix
+total abundances.<br />
+</li>
+<li class="fragment">All available using function
+<code>decostand()</code> from <code>vegan</code> and specified via
+option <code>method =</code>.<br />
+Chord is implemented under name <code>normalize</code>.</li>
+</ul>
+</section>
+
+<section id="pca-or-rda-on-transformed-data"
+class="title-slide slide level1">
+<h1>PCA or RDA on transformed data</h1>
+<p>After we have transformed the abundance data using one of these
+transformations, we apply PCA or RDA (depending on whether our goal is
+unconstrained or constrained ordination). Since we pre-transformed the
+data, the resulting distances will be not Euclidean but will depend on
+the transformation we used. And these distances (Hellinger, <span
+class="math inline">\(\chi^2\)</span>) are not sensitive to ‘double
+zeros’, circumventing the problem.</p>
+<ul>
+<li class="fragment">Hellinger transformation + Euclidean distance (PCA
+or RDA) –&gt; Hellinger distance<br />
+</li>
+<li class="fragment"><span class="math inline">\(\chi^2\)</span>
+transformation + Euclidean distance (PCA or RDA) –&gt; <span
+class="math inline">\(\chi^2\)</span> distance</li>
+</ul>
+</section>
+
+<section id="community-dissimilarity" class="title-slide slide level1">
+<h1>Community (dis)similarity</h1>
+<p>Jaccard similarity index</p>
+<ul>
+<li class="fragment"><p>Presence-absence based (i.e. based on species
+richness)<br />
+<span class="math inline">\(J = \frac {a} {(a + b + c)}\)</span>,<br />
+where a is the number of species that are present in both sites<br />
+b is the number of species that are unique to site 1<br />
+c is the number of species that are unique to site 2</p></li>
+<li class="fragment"><p>a = 2; b = 2, c = 2<br />
+<span class="math inline">\(J = \frac {2} {(2 + 2 + 2)} =
+0.33\)</span><br />
+<span class="math inline">\(D_J = 1 - J = 1- 0.33 =
+0.66\)</span></p></li>
+</ul>
+<div class="pull-left">
+<p style="text-align:center;">
+<img src="img/Site_rural.png" height = "250"/>
+</p>
+</div>
+<div class="pull-right">
+<p style="text-align:center;">
+<img src="img/Site_urban.png" height = "250"/>
+</p>
+</div>
+</section>
+
+<section id="bray-curtis-similarity" class="title-slide slide level1">
+<h1>Bray-Curtis similarity</h1>
+<p>Considers species abundances.<br />
+<span class="math display">\[BC_{ij} = \frac{2 \times C_{ij}}{S_i +
+S_j}\]</span></p>
+<p>where <span class="math inline">\(C_{ij}\)</span> are the sum of
+minimum abundances of each species that are found at both sites (i and
+j);<br />
+<span class="math inline">\(S_i\)</span> is the total abundance of all
+species found in site <span class="math inline">\(i\)</span>;<br />
+<span class="math inline">\(S_j\)</span> is the total abundance of all
+species found in site <span class="math inline">\(j\)</span>.</p>
+<p>Different dissimilarity metrics are available with function
+<code>vegdist()</code> in <code>vegan</code> and specified via option
+<code>method =</code>.</p>
+</section>
+
+<section id="application" class="title-slide slide level1">
+<h1>Application</h1>
+<p>Bat community in Eastern Ukrainian forests</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&#39;data&#39;</span>, <span class="st">&#39;PlotLevel_16112021.csv&#39;</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    11 obs. of  30 variables:
+##  $ plot_Acr     : chr  &quot;KOZ&quot; &quot;TET&quot; &quot;PEC&quot; &quot;MOK&quot; ...
+##  $ plot.Num     : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ MDA          : int  14 12 14 1 5 51 89 3 74 5 ...
+##  $ MBR          : int  0 1 0 73 0 4 4 0 0 0 ...
+##  $ MDS          : int  0 0 8 0 0 1 7 0 37 0 ...
+##  $ NNO          : int  0 269 180 26 88 397 406 99 224 168 ...
+##  $ NLE          : int  1 15 6 23 4 11 3 0 47 29 ...
+##  $ ESE          : int  0 6 0 3 0 2 1 1 2 17 ...
+##  $ PNA          : int  0 8 117 12 6 23 84 37 94 4 ...
+##  $ PPY          : int  0 4 19 44 0 52 57 20 29 6 ...
+##  $ PKU          : int  0 0 0 0 0 1 0 0 0 0 ...
+##  $ VMU          : int  0 0 0 0 1 0 2 8 1 0 ...
+##  $ PLA          : int  24 13 14 4 1 3 7 0 6 4 ...
+##  $ NLA          : int  0 0 0 0 0 0 0 0 0 4 ...
+##  $ MN.Hours     : num  88 54.8 39.8 75.8 58 ...
+##  $ field        : num  290.1 3.8 0 0 307.8 ...
+##  $ meadow       : num  4 48.6 3.2 141.7 26.7 ...
+##  $ forest       : num  380 356 540 648 143 ...
+##  $ forest_cut   : num  85.4 10.2 62 0 0 0 0 0 0 12.9 ...
+##  $ lake         : num  0.2 2.5 76.6 5.7 1.1 ...
+##  $ river        : num  0 0 0 16.6 0 15.7 21 0 0 0 ...
+##  $ settlement   : num  0 75.5 0 1.1 0 11.1 0 24.9 8.8 32.2 ...
+##  $ Total_Hab    : num  759 497 682 814 479 ...
+##  $ clearcut     : num  85.4 10.2 62 0 0 0 0 0 0 12.9 ...
+##  $ conif_to90   : num  0 0 0 0.4 0 0 0 0 0 0 ...
+##  $ conif_More91 : num  13.5 0 0 0 0 0 0 0 0 4.4 ...
+##  $ decid_10_40  : num  69.3 0 1.5 15.7 3.1 0.8 2 0.6 6.8 0 ...
+##  $ decid_41_90  : num  233.6 226.9 74.7 313.5 104.6 ...
+##  $ decid_More90 : num  32.1 65.5 439.7 133.5 35.3 ...
+##  $ decid_More150: num  31.3 63.7 24 185.3 0 ...</code></pre>
+</section>
+
+<section id="explore-species-data" class="title-slide slide level1">
+<h1>Explore species data</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>com <span class="ot">&lt;-</span> <span class="fu">subset</span>(dat, <span class="at">select =</span> <span class="fu">c</span>(MDA, MBR, MDS, NNO, NLE, ESE, PNA, PPY, VMU, PLA)) <span class="co"># PKU,  NLA removed</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>com_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(com, <span class="at">cols =</span><span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&#39;Species&#39;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">&#39;Abundance&#39;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(com_long, <span class="fu">aes</span>(<span class="at">x =</span> Abundance)) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(Species), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="03_Lecture_DataTypes_files/figure-revealjs/explore_dat-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="transform-data" class="title-slide slide level1">
+<h1>Transform data</h1>
+<p>We use Hellinger transformation</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hel_com <span class="ot">&lt;-</span> <span class="fu">decostand</span>(com, <span class="at">method =</span>  <span class="st">&#39;hellinger&#39;</span>)  </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>hel_com_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(hel_com, <span class="at">cols =</span><span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&#39;Species&#39;</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">&#39;Abundance&#39;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hel_com_long, <span class="fu">aes</span>(<span class="at">x =</span> Abundance)) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(Species), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="03_Lecture_DataTypes_files/figure-revealjs/transform-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="compute-distances-directly"
+class="title-slide slide level1">
+<h1>Compute distances directly</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>BrayDist <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(com, <span class="at">method =</span>  <span class="st">&#39;bray&#39;</span>)  </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>BrayDist</span></code></pre></div>
+<pre><code>##            1         2         3         4         5         6         7
+## 2  0.8583106                                                            
+## 3  0.8539043 0.3498542                                                  
+## 4  0.9466667 0.7587549 0.7500000                                        
+## 5  0.9027778 0.5196305 0.5507559 0.7388316                              
+## 6  0.9382504 0.2889908 0.4545455 0.7178082 0.6795069                    
+## 7  0.9370529 0.3825911 0.3831041 0.7754137 0.7281046 0.1112957          
+## 8  0.9710145 0.5362903 0.3992395 0.6610169 0.2820513 0.5898876 0.6086957
+## 9  0.9240506 0.3562945 0.2500000 0.7228571 0.6607431 0.3497164 0.2691652
+## 10 0.9264706 0.2655971 0.3468697 0.6801909 0.3964497 0.4877735 0.5722284
+## 11 0.9354839 0.4774775 0.5189873 0.7417219 0.1312217 0.6484848 0.7139175
+##            8         9        10
+## 2                               
+## 3                               
+## 4                               
+## 5                               
+## 6                               
+## 7                               
+## 8                               
+## 9  0.5278592                    
+## 10 0.4364090 0.4163320          
+## 11 0.2746479 0.6317460 0.3352436</code></pre>
+</section>
+
+<section id="visualise-bray-curtis-dissimilarities"
+class="title-slide slide level1">
+<h1>Visualise Bray-Curtis dissimilarities</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dissplot</span>(BrayDist)</span></code></pre></div>
+<p><img src="03_Lecture_DataTypes_files/figure-revealjs/visualize%20distMat-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="another-way-to-visualize" class="title-slide slide level1">
+<h1>Another way to visualize</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">as.matrix</span>(BrayDist), <span class="at">method =</span> <span class="st">&#39;shade&#39;</span>)</span></code></pre></div>
+<p><img src="03_Lecture_DataTypes_files/figure-revealjs/visualize%20cor-1.png" width="70%" height="70%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="length-of-the-gradient" class="title-slide slide level1">
+<h1>Length of the gradient</h1>
+<ul>
+<li class="fragment">If environmental gradient that was sampled is
+rather short, the relation between species abundance and environment can
+be approximated as linear –&gt; use linear approaches (PCA and RDA).
+Usually axis is shorter than 3SD.<br />
+</li>
+<li class="fragment">If environmental gradient is long, then we expect a
+unimodal response of a species across the gradient –&gt; use unimodal
+approaches (CA, CCA). Usually axis is longer than 4SD.<br />
+</li>
+<li class="fragment">Length of the gradient can be obtained by running
+DCA (the length of the first DCA axis indicates the length of the
+gradient).</li>
+</ul>
+</section>
+
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+<p style="text-align:center;">
+<img src="img/Transf_DistBased_Legendre&Gallagher.png" height = "600"/>
+</p>
+<p style="font-size: 40%;">
+<span class="citation" data-cites="Modified">@Modified</span> from
+Legendre &amp; Gallagher 2001
+</p>
+</section>
+
+<section id="questions" class="title-slide slide level1">
+<h1>Questions?</h1>
+
+</section>
+    </div>
+  </div>
+
+  <script src="03_Lecture_DataTypes_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="03_Lecture_DataTypes_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
