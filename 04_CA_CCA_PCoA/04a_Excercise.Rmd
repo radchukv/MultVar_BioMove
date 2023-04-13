@@ -1,0 +1,27 @@
+---
+title: "Practical session: CA & CCA"
+author: "Radchuk Viktoriia"
+date: "2022-03-27"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Use the data on bat communities sampled in the Eastern Ukrainian forests on a plot level to:    
+
+- investigate the relations among species and sites (without any data transformations); remark: please exclude species PKU and  NLA from the species by sites matrix, as we did during the lecture.     
+- to assess the impact of forest age structure on community composition without using any transformations. As explanatory variables please use the areas of the forest within different age categories for each plot:  clearcut, decid_10_40, decid_41_90, decid_More90, decid_More150.
+
+Answer the following questions:    
+- Does exploratory analysis detect some species that are closer associated with particular plots?   
+- What is the proportion of variation in species matrix explained by the ares of different aged forest?        
+- Is the association between the areas of different age categories and community composition significant?    
+- Are areas of particular forest age significant in explaining the bat community composition?     
+
+
+
