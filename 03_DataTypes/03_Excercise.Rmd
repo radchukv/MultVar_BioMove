@@ -1,5 +1,5 @@
 ---
-title: "Practical session: distance-based RDA"
+title: "Practical session: transformation-based RDA"
 author: "Radchuk Viktoriia"
 date: "2022-03-21"
 output:
