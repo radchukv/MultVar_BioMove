@@ -1,0 +1,26 @@
+---
+title: "Practical session: distance-based RDA"
+author: "Radchuk Viktoriia"
+date: "2022-03-21"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Use the data on bat communities sampled in forests in Eastern Ukraine and assess the impact of forest age structure on community composition. To do so, fit a transformation-based RDA (transform the species data using one of the appropriate transformations prior to applying RDA). As explanatory variables please use the areas of the forest within different age categories for each plot:  clearcut, decid_10_40, decid_41_90, decid_More90, decid_More150.
+
+- What is the proportion of variation in species matrix explained by these explanatory variables?    
+- Is the association between the areas of forest in different ages and community composition significant?    
+- Are areas of particular forest age significant in explaining the bat community composition?     
+- What are the main species associations with the forest age?     
+
+
+
+
+
+
