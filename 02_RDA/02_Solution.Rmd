@@ -1,0 +1,153 @@
+---
+title: "Solution for the exercise on RDA"
+author: "Radchuk Viktoriia"
+date: "2022-03-20"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(vegan)
+```
+
+# Read in the data
+```{r LH data read, echo = TRUE}
+#  reading in the file with the 143 species of interest
+spSEAsia <- read.csv(file = here::here('data', 'Species_SEAsia_02_02_16_fin.csv'))
+str(spSEAsia)
+
+# read in the PanTheria database
+pant <- read.delim(file = here::here('data', 'Pantheria.txt'))
+str(pant)
+```
+
+# Prepare data    
+```{r data prep, echo = TRUE}
+## joining both datasets together
+pant$Sp_bin <- pant$MSW05_Binomial
+LH <- merge(pant, spSEAsia, by = "Sp_bin")
+nrow(LH)  
+
+## Select 5 life history traits of interest and 3 environmental variables - I chose to exclude AET since it is easier to interpret the effects of precipitation
+LH_subs <- LH %>%
+  select('Genus', 'Species', 'Sp_bin', 
+         'X5.1_AdultBodyMass_g',  'X15.1_LitterSize',
+         'X6.1_DietBreadth', 'X22.1_HomeRange_km2',
+         'X27.2_HuPopDen_Mean_n.km2', 'X28.1_Precip_Mean_mm',
+         'X28.2_Temp_Mean_01degC')
+
+
+# replacing -999 with NA
+LH_subs[LH_subs == -999] <-  NA
+
+LH_noNA <- na.omit(LH_subs)
+names(LH_noNA) <- sub("^[^_]*_", "", names(LH_noNA))
+str(LH_noNA)
+```
+
+# Prepare both matrices (explanatory and response)
+```{r RDA run, echo = TRUE}
+traits_SEas <- LH_noNA %>%
+  select('AdultBodyMass_g',  'LitterSize',
+         'DietBreadth', 'HomeRange_km2')
+
+env_SEas <- LH_noNA %>%
+  select('HuPopDen_Mean_n.km2', 'Precip_Mean_mm',
+            'Temp_Mean_01degC') %>% 
+  mutate_all(list(z = ~ scale(.))) %>% 
+  select(ends_with("_z"))
+
+```
+
+We standardize the explanatory variables prior to running RDA because these variables are in very different units.    
+
+
+
+# Run RDA
+```{r run RDA, echo = TRUE}
+rda_env <- rda(traits_SEas ~ ., env_SEas, scale = TRUE)
+
+```
+Since our response variables (adult body mass, litter size, diet breadth and home range) are in very different units, we scale them to unit variance, so that all variables are now unitless and comparable.
+
+# Interpreting RDA
+```{r interpret RDA, echo = TRUE}
+summary(rda_env)
+RsquareAdj(rda_env)
+```
+
+
+# Visualize RDA results
+```{r plot RDA, echo = TRUE,  out.height='80%', out.width='80%', fig.align='center'}
+par(mfrow = c(1, 2))
+plot(rda_env, scaling = 1, main ='Scaling 1')
+plot(rda_env, scaling = 2, main = 'Scaling 2')
+```
+
+
+
+# Imrpoving a bit the plot
+```{r custom-plotRDA, out.height='80%', out.width='80%', fig.align= 'center'}
+plt_RDA <- scores(rda_env, choices = c(1,2), scaling = 2, tidy = TRUE)
+
+LH_noNA$label <- rownames(LH_noNA)
+vis_RDA <- merge(subset(plt_RDA, score =='sites'), LH_noNA, by = 'label')
+
+spec <- plt_RDA %>%
+  filter(score == 'species')
+expl <- plt_RDA %>%
+  filter(score == 'biplot')
+
+ggplot(vis_RDA, aes(x = RDA1, y = RDA2)) +
+   geom_text(aes(label = bin), check_overlap = TRUE) +
+  geom_segment(data = spec,
+               aes(x=0, y=0, xend=RDA1, yend=RDA2),
+               col ='darkgrey') +
+  geom_text(data = spec, aes(label = label), check_overlap = TRUE,
+            nudge_y = 0.15, col = 'darkgrey') +
+  geom_segment(data = expl,
+               aes(x=0, y=0, xend=RDA1, yend=RDA2),
+               col ='blue', 
+               arrow = arrow(length=unit(.5, 'cm'))) +
+  geom_text(data = expl, aes(label = label), 
+            nudge_y = 0.15, col = 'blue') +
+theme_bw() +
+  geom_hline(yintercept = 0, lty = 3) +
+  geom_vline(xintercept = 0, lty = 3) 
+
+```
+
+# Test significance
+```{r sign, echo = TRUE}
+anova.cca(rda_env, step = 1000)
+
+## for each axis and term
+anova.cca(rda_env, by ='axis', step = 1000)
+anova.cca(rda_env, by = 'margin', step = 1000)
+```
+
+# Conduct variation partitioning
+```{r varPart, echo = TRUE}
+part.LH <- varpart(traits_SEas, ~ Precip_Mean_mm_z +
+            Temp_Mean_01degC_z, ~HuPopDen_Mean_n.km2_z, 
+            scale = TRUE, data = env_SEas)
+part.LH
+plot(part.LH)
+
+```
+<span style="color:blue"> What does this mean?</span> 
+
+Basically inclusion of human population density does not really ad much to the quality of the model and to the explanation of the life history traits of mammals.
+Indeed, let us check this by fitting RDA without human population density as an explanatory variable. 
+```{r rda_2 explan, echo = TRUE}
+rda_sub <- rda(traits_SEas ~ Precip_Mean_mm_z +
+            Temp_Mean_01degC_z, env_SEas, scale = TRUE)
+
+summary(rda_sub)
+RsquareAdj(rda_sub)
+```
+
