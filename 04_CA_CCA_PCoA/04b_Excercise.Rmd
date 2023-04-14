@@ -1,0 +1,27 @@
+---
+title: "Practical session: PCoA and db-RDA"
+author: "Radchuk Viktoriia"
+date: "2022-03-27"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Use the data on bat communities sampled in the forests of Eastern Ukraine at the plot level to:   
+
+- investigate the relations among species and sites using PCoA. Pick the appropriate distance metric yourself. Important: please exclude species PKU and  NLA from the species by sites matrix, as we did during the lecture.    
+- assess the impact of forest age structure on community composition using db-RDA. As explanatory variables please use the areas of the forest within different age categories for each plot:  clearcut, decid_10_40, decid_41_90, decid_More90, decid_More150.
+
+Answer the following questions:    
+- What does PCoA suggest?   
+- Is the association between the areas of forest in different ages and community composition significant, according to db-RDA?    
+- Are areas of particular forest age significant in explaining the bat community composition?   
+
+
+
+
