@@ -1,0 +1,61 @@
+---
+title: "Solution for the exercise on NMDS"
+author: "Radchuk Viktoriia"
+date: "2022-03-30"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(vegan)
+library(goeveg)
+```
+
+# Read in the data
+```{r Anton data, echo = TRUE}
+dat <- read.csv(file = here::here('data', 'PlotLevel_16112021.csv'))
+
+str(dat)
+```
+
+Prepare species data 
+```{r prep speciesDat, echo = TRUE, out.height= '60%', out.width= '60%', fig.align='center'}
+com <- subset(dat, select = c(MDA, MBR, MDS, NNO, NLE, ESE, PNA, PPY, VMU, PLA)) # PKU,  NLA removed
+
+```
+
+# Run NMDS
+I use Bray-Curtis dissimilarity
+```{r nmds, echo = TRUE}
+nmds_bat <- metaMDS(com, distance = 'bray', k = 2, wascores = TRUE)
+nmds_bat
+
+```
+
+
+# Visualize the results
+```{r vis nmds, echo = TRUE, fig.align='center', out.height='100%', out.width= '100%'}
+ordiplot(nmds_bat, type = 'text', cex = 1.1)
+
+```
+
+Let us check how number of selected dimensions affects stress value
+```{r scree plot, echo= TRUE, fig.align= 'center', results = 'hide'}
+dimcheckMDS(com, k = 5)
+```
+
+# Add supplementary explanatory variables
+```{r explanVar, echo = TRUE, out.height= '100%', out.width= '100%', fig.align='center'}
+OldFor.bats <- envfit(nmds_bat ~ decid_More150 + clearcut, data= dat, perm = 999)
+OldFor.bats
+```
+
+# Plot supplementary predictor on NMDS
+```{r plot env predictor, echo = TRUE, fig.align= 'center', out.height= '100%', out.width= '100%'}
+ordiplot(nmds_bat, type = 'text', cex = 1.1)
+plot(OldFor.bats)
+```
