@@ -1,0 +1,18 @@
+---
+title: "Practical session: NMDS"
+author: "Radchuk Viktoriia"
+date: "2022-03-30"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+We are interested in whether there any structure in bat composition in Eastern Ukrainian forests (whether some study plots are characterised by higher abundance / likelier presence of particular species). We investigate this using NMDS. Please exclude species PKU and NLA from the species by sites matrix prior to running the analyses, as we did during the lecture.    
+We also want to know whether the area of clearcuts and the oldest deciduous forest (aged >150 years) correlate with the ordination of sites in the first two dimensions (according to NMDS).
+
+
