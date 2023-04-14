@@ -1,0 +1,82 @@
+---
+title: "Solution for the exercise on PCoA and db-RDA"
+author: "Radchuk Viktoriia"
+date: "2022-03-27"
+output:
+  html_document:
+    theme: default
+       
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(vegan)
+```
+
+# Read in the data
+```{r Anton data, echo = TRUE}
+dat <- read.csv(file = here::here('data', 'PlotLevel_16112021.csv'))
+
+str(dat)
+```
+
+Prepare species data 
+```{r prep speciesDat, echo = TRUE, out.height= '60%', out.width= '60%', fig.align='center'}
+com <- subset(dat, select = c(MDA, MBR, MDS, NNO, NLE, ESE, PNA, PPY, VMU, PLA)) # PKU,  NLA removed
+
+```
+
+# Run PCoA
+I use Bray-Curtis dissimilarity
+```{r calc bray matrix, echo = TRUE}
+BC_matrix <- vegdist(com, method = 'bray')
+BC_matrix
+
+
+bat_pcoa <- cmdscale(BC_matrix, eig= TRUE)
+bat_pcoa
+```
+
+
+# Visualize the results
+```{r vis PcoA, echo = TRUE, fig.align='center', out.height='60%', out.width= '60%'}
+ordiplot(bat_pcoa, display = 'sites', type = 'text')
+
+## add species
+bat_spec <- wascores(x = bat_pcoa$points, w = com)
+ordiplot(bat_pcoa, display = 'sites', type = 'text')
+text(bat_spec, labels = rownames(bat_spec), col = 'blue', cex = 0.7)
+```
+
+
+Prepare explanatory data
+```{r prep explanDat, echo = TRUE, out.height= '60%', out.width= '60%', fig.align='center'}
+env_plot <- subset(dat, select = c(clearcut, decid_10_40, decid_41_90,  
+                                   decid_More90, decid_More150))
+```
+
+
+# Run db-RDA
+```{r run dbRDA, echo = TRUE}
+dbRDA_bats <- capscale(com ~., env_plot, distance = 'bray', sqrt.dist = TRUE)  ## we use square root of bray-Curtis dissimilarity, to make it metric (otherwise negative eigenvalues result)
+dbRDA_bats
+summary(dbRDA_bats)
+```
+
+
+# Visualize db-RDA results
+```{r plot CCA, echo = TRUE,  out.height='80%', out.width='80%', fig.align='center'}
+plot(dbRDA_bats, scaling = 2)
+```
+
+
+# Test significance
+```{r sign, echo = TRUE}
+anova(dbRDA_bats, step = 1000)
+
+## for each axis and term
+anova(dbRDA_bats, by ='axis', step = 1000)
+anova(dbRDA_bats, by = 'term', step = 1000)
+anova(dbRDA_bats, by = 'margin', step = 1000)
+```
