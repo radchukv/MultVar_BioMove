@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Radchuk Viktoriia" />
+  <meta name="dcterms.date" content="2023-03-29" />
+  <title>Non-metric Multidimensional Scaling (NMDS)</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="05_Lecture_NMDS_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="05_Lecture_NMDS_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="../css/default.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="05_Lecture_NMDS_files/header-attrs-2.20/header-attrs.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Non-metric Multidimensional Scaling (NMDS)</h1>
+    <h2 class="author">Radchuk Viktoriia</h2>
+    <h3 class="date">2023-03-29</h3>
+</section>
+
+<section id="nmds" class="title-slide slide level1">
+<h1>NMDS</h1>
+<ul>
+<li class="fragment">Non-metric ordination technique. Relies on the
+ranks of the dissimilarities.<br />
+</li>
+<li class="fragment">No restriction on types of the distance among
+objects, i.e. can use any dissimilarity measure among objects.<br />
+</li>
+<li class="fragment">No linear relations among descriptors
+assumed.<br />
+</li>
+<li class="fragment">Aims to locate objects in low dimensional
+ordination space (pre-specified by the user, usually 2 or 3 axes) in
+such a way that the Euclidean distances between these objects will
+reflect the dissimilarities among the objects in original
+multi-dimensional space.<br />
+</li>
+<li class="fragment">Iterative algorithm that tries to find best
+location of the objects in the reduced ordination space. Each run may
+have a different solution.</li>
+</ul>
+</section>
+
+<section id="main-differences-to-other-ordination-approaches"
+class="title-slide slide level1">
+<h1>Main differences to other ordination approaches</h1>
+<ul>
+<li class="fragment">Iterative algorithm (no analytical solution)<br />
+</li>
+<li class="fragment">The position of objects in only a limited number of
+axes is calculated, whereas in most ordination techniques the positions
+along many axes are calculated but only a few are visualised.<br />
+</li>
+<li class="fragment">Not based on eigenvalue decomposition, so that the
+first axis does not represent the largest variation in the data. Thus,
+the axes may be arbitrarily rotated or inverted.</li>
+</ul>
+</section>
+
+<section id="algorithm-simplified" class="title-slide slide level1">
+<h1>Algorithm (simplified)</h1>
+<ol type="1">
+<li class="fragment">Specify the number <span
+class="math inline">\(m\)</span> of dimensions sought.</li>
+<li class="fragment">Construct initial configuration of all objects in
+<span class="math inline">\(m\)</span> dimensions, this will be a
+starting point for the iterative algorithm. The output may depend on
+this step (remember ‘butterfly effect’). Ways to chose initial
+configuration: generate randomly or use the results of PCoA
+ordination.<br />
+</li>
+<li class="fragment">An iterative algorithm tries to position the
+objects in a given number of dimensions such as to decrease a so-called
+‘stress value’. Stress value measures how far the distances in the
+reduced ordination space are from monotonic of the distances in the
+original dissimilarity matrix. Stress value ranges between 0 and 1, the
+lower stress value, the better.</li>
+<li class="fragment">The algorithm stops when the new iteration cannot
+lower the stress value or when the stress value reaches a pre-determined
+value (this is a tolerated lack-of-fit).</li>
+<li class="fragment">Most NMDS softwares rotate the final solution using
+PCA, to help the interpretation.</li>
+</ol>
+</section>
+
+<section id="stress" class="title-slide slide level1">
+<h1>Stress</h1>
+<p><span class="math display">\[Stress =\sqrt{\frac{\sum_{h,
+i}(d_{hi}-\hat{d}_{hi})^2}{\sum_{h, i}d_{hi}^2}}\]</span> where <span
+class="math inline">\(d_{hi}\)</span> is the ordinated distances between
+objects h and i;<br />
+<span class="math inline">\(\hat{d}_{hi}\)</span> is the predicted
+distances from the regression of the ordinated distances and those in
+the original distance matrix.</p>
+<p>Stress thus indicates lack of fit of the resulting ordination to the
+original distances.</p>
+</section>
+
+<section id="rules-of-thumb-for-stress-value"
+class="title-slide slide level1">
+<h1>‘Rules of thumb’ for stress value</h1>
+<ul>
+<li class="fragment">stress &gt; 0.2 indicates a rather non-satisfactory
+result,<br />
+</li>
+<li class="fragment">stress &gt; 0.3 the ordination is said ‘to be
+generated arbitrary, independently of the dissimilarities in the
+original matrix’,<br />
+</li>
+<li class="fragment">stress &lt; 0.1 indicates good fit between the
+original dissimilarities and the resulting ordination.<br />
+BUT: stress increases with the number of objects and number of
+descriptors. So, one cannot just compare stress values among data sets
+with different number of objects.</li>
+</ul>
+</section>
+
+<section id="disadvantages-of-nmds" class="title-slide slide level1">
+<h1>Disadvantages of NMDS</h1>
+<ul>
+<li class="fragment">Computationally intensive (this is what arguably
+limited its use still 20 years ago but becomes of no importance
+nowadays)<br />
+</li>
+<li class="fragment">Since it is an optimisation algorithm, it may fail
+to find the global best solution and instead be stuck in local minima
+(this is less of an issue nowadays when multiple rpeetitions can be run
+to check whether the algorithm indeed converged on the global
+optimum)</li>
+</ul>
+</section>
+
+<section id="application-vegetation-data"
+class="title-slide slide level1">
+<h1>Application: Vegetation data</h1>
+<p>We use the same plant cover data taken from 24 sites on in total 44
+species.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(varespec)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(varespec)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    24 obs. of  44 variables:
+##  $ Callvulg: num  0.55 0.67 0.1 0 0 ...
+##  $ Empenigr: num  11.13 0.17 1.55 15.13 12.68 ...
+##  $ Rhodtome: num  0 0 0 2.42 0 0 1.55 0 0.35 0.07 ...
+##  $ Vaccmyrt: num  0 0.35 0 5.92 0 ...
+##  $ Vaccviti: num  17.8 12.1 13.5 16 23.7 ...
+##  $ Pinusylv: num  0.07 0.12 0.25 0 0.03 0.12 0.1 0.1 0.05 0.12 ...
+##  $ Descflex: num  0 0 0 3.7 0 0.02 0.78 0 0.4 0 ...
+##  $ Betupube: num  0 0 0 0 0 0 0.02 0 0 0 ...
+##  $ Vacculig: num  1.6 0 0 1.12 0 0 2 0 0.2 0 ...
+##  $ Diphcomp: num  2.07 0 0 0 0 0 0 0 0 0.07 ...
+##  $ Dicrsp  : num  0 0.33 23.43 0 0 ...
+##  $ Dicrfusc: num  1.62 10.92 0 3.63 3.42 ...
+##  $ Dicrpoly: num  0 0.02 1.68 0 0.02 0.02 0 0.23 0.2 0 ...
+##  $ Hylosple: num  0 0 0 6.7 0 0 0 0 9.97 0 ...
+##  $ Pleuschr: num  4.67 37.75 32.92 58.07 19.42 ...
+##  $ Polypili: num  0.02 0.02 0 0 0.02 0.02 0 0 0 0 ...
+##  $ Polyjuni: num  0.13 0.23 0.23 0 2.12 1.58 0 0.02 0.08 0.02 ...
+##  $ Polycomm: num  0 0 0 0.13 0 0.18 0 0 0 0 ...
+##  $ Pohlnuta: num  0.13 0.03 0.32 0.02 0.17 0.07 0.1 0.13 0.07 0.03 ...
+##  $ Ptilcili: num  0.12 0.02 0.03 0.08 1.8 0.27 0.03 0.1 0.03 0.25 ...
+##  $ Barbhatc: num  0 0 0 0.08 0.02 0.02 0 0 0 0.07 ...
+##  $ Cladarbu: num  21.73 12.05 3.58 1.42 9.08 ...
+##  $ Cladrang: num  21.47 8.13 5.52 7.63 9.22 ...
+##  $ Cladstel: num  3.5 0.18 0.07 2.55 0.05 ...
+##  $ Cladunci: num  0.3 2.65 8.93 0.15 0.73 0.25 2.38 0.82 0.05 0.95 ...
+##  $ Cladcocc: num  0.18 0.13 0 0 0.08 0.1 0.17 0.15 0.02 0.17 ...
+##  $ Cladcorn: num  0.23 0.18 0.2 0.38 1.42 0.25 0.13 0.05 0.03 0.05 ...
+##  $ Cladgrac: num  0.25 0.23 0.48 0.12 0.5 0.18 0.18 0.22 0.07 0.23 ...
+##  $ Cladfimb: num  0.25 0.25 0 0.1 0.17 0.1 0.2 0.22 0.1 0.18 ...
+##  $ Cladcris: num  0.23 1.23 0.07 0.03 1.78 0.12 0.2 0.17 0.02 0.57 ...
+##  $ Cladchlo: num  0 0 0.1 0 0.05 0.05 0.02 0 0 0.02 ...
+##  $ Cladbotr: num  0 0 0.02 0.02 0.05 0.02 0 0 0.02 0.07 ...
+##  $ Cladamau: num  0.08 0 0 0 0 0 0 0 0 0 ...
+##  $ Cladsp  : num  0.02 0 0 0.02 0 0 0.02 0.02 0 0.07 ...
+##  $ Cetreric: num  0.02 0.15 0.78 0 0 0 0.02 0.18 0 0.18 ...
+##  $ Cetrisla: num  0 0.03 0.12 0 0 0 0 0.08 0.02 0.02 ...
+##  $ Flavniva: num  0.12 0 0 0 0.02 0.02 0 0 0 0 ...
+##  $ Nepharct: num  0.02 0 0 0 0 0 0 0 0 0 ...
+##  $ Stersp  : num  0.62 0.85 0.03 0 1.58 0.28 0 0.03 0.02 0.03 ...
+##  $ Peltapht: num  0.02 0 0 0.07 0.33 0 0 0 0 0.02 ...
+##  $ Icmaeric: num  0 0 0 0 0 0 0 0.07 0 0 ...
+##  $ Cladcerv: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Claddefo: num  0.25 1 0.33 0.15 1.97 0.37 0.15 0.67 0.08 0.47 ...
+##  $ Cladphyl: num  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+</section>
+
+<section id="run-nmds" class="title-slide slide level1">
+<h1>Run NMDS</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nmds_veg <span class="ot">&lt;-</span> <span class="fu">metaMDS</span>(varespec, <span class="at">distance =</span> <span class="st">&#39;bray&#39;</span>, <span class="at">k =</span> <span class="dv">2</span>, <span class="at">wascores =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.1843196 
+## Run 1 stress 0.2028828 
+## Run 2 stress 0.1843196 
+## ... New best solution
+## ... Procrustes: rmse 2.363484e-05  max resid 9.466593e-05 
+## ... Similar to previous best
+## Run 3 stress 0.1825658 
+## ... New best solution
+## ... Procrustes: rmse 0.04160567  max resid 0.1517021 
+## Run 4 stress 0.22964 
+## Run 5 stress 0.2057245 
+## Run 6 stress 0.2114447 
+## Run 7 stress 0.2143613 
+## Run 8 stress 0.2104573 
+## Run 9 stress 0.1982376 
+## Run 10 stress 0.18458 
+## Run 11 stress 0.1955838 
+## Run 12 stress 0.2093086 
+## Run 13 stress 0.210541 
+## Run 14 stress 0.2425948 
+## Run 15 stress 0.2328559 
+## Run 16 stress 0.1976152 
+## Run 17 stress 0.2044973 
+## Run 18 stress 0.222107 
+## Run 19 stress 0.2419378 
+## Run 20 stress 0.1969805 
+## *** Best solution was not repeated -- monoMDS stopping criteria:
+##     18: stress ratio &gt; sratmax
+##      2: scale factor of the gradient &lt; sfgrmin</code></pre>
+</section>
+
+<section id="results-nmds" class="title-slide slide level1">
+<h1>Results NMDS</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nmds_veg</span></code></pre></div>
+<pre><code>## 
+## Call:
+## metaMDS(comm = varespec, distance = &quot;bray&quot;, k = 2, wascores = TRUE) 
+## 
+## global Multidimensional Scaling using monoMDS
+## 
+## Data:     wisconsin(sqrt(varespec)) 
+## Distance: bray 
+## 
+## Dimensions: 2 
+## Stress:     0.1825658 
+## Stress type 1, weak ties
+## Best solution was not repeated after 20 tries
+## The best solution was from try 3 (random start)
+## Scaling: centring, PC rotation, halfchange scaling 
+## Species: expanded scores based on &#39;wisconsin(sqrt(varespec))&#39;</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nmds_veg<span class="sc">$</span>points</span></code></pre></div>
+<pre><code>##            MDS1         MDS2
+## 18 -0.121510530 -0.121113726
+## 15  0.001256716 -0.099468382
+## 24  0.238018637  0.441369050
+## 27  0.585078056 -0.167973326
+## 23  0.142354701  0.046650347
+## 19  0.092358135  0.048308717
+## 22  0.188031113 -0.146116888
+## 16  0.045734261 -0.134341989
+## 28  0.530342561 -0.031991241
+## 13 -0.077103053 -0.047990759
+## 14 -0.026047363 -0.249635566
+## 20  0.077068825 -0.049523762
+## 25  0.229730840 -0.458482127
+## 7  -0.267692342 -0.213804779
+## 5  -0.454682128 -0.332721623
+## 6  -0.196658539 -0.045775960
+## 3  -0.285968762 -0.123406391
+## 4  -0.374119432  0.007891848
+## 2  -0.473621322  0.344619702
+## 9  -0.116147487  0.167127294
+## 12  0.015795839  0.303685750
+## 10 -0.165001246  0.237266955
+## 11 -0.139570728  0.377605574
+## 21  0.552353248  0.247821281
+## attr(,&quot;centre&quot;)
+## [1] TRUE
+## attr(,&quot;pc&quot;)
+## [1] TRUE
+## attr(,&quot;halfchange&quot;)
+## [1] TRUE
+## attr(,&quot;internalscaling&quot;)
+## [1] 2.739442</code></pre>
+</section>
+
+<section id="interpret-the-results" class="title-slide slide level1">
+<h1>Interpret the results</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nmds_veg)</span></code></pre></div>
+<pre><code>##            Length Class  Mode     
+## nobj         1    -none- numeric  
+## nfix         1    -none- numeric  
+## ndim         1    -none- numeric  
+## ndis         1    -none- numeric  
+## ngrp         1    -none- numeric  
+## diss       276    -none- numeric  
+## iidx       276    -none- numeric  
+## jidx       276    -none- numeric  
+## xinit       48    -none- numeric  
+## istart       1    -none- numeric  
+## isform       1    -none- numeric  
+## ities        1    -none- numeric  
+## iregn        1    -none- numeric  
+## iscal        1    -none- numeric  
+## maxits       1    -none- numeric  
+## sratmx       1    -none- numeric  
+## strmin       1    -none- numeric  
+## sfgrmn       1    -none- numeric  
+## dist       276    -none- numeric  
+## dhat       276    -none- numeric  
+## points      48    -none- numeric  
+## stress       1    -none- numeric  
+## grstress     1    -none- numeric  
+## iters        1    -none- numeric  
+## icause       1    -none- numeric  
+## call         5    -none- call     
+## model        1    -none- character
+## distmethod   1    -none- character
+## distcall     1    -none- character
+## data         1    -none- character
+## distance     1    -none- character
+## converged    1    -none- numeric  
+## tries        1    -none- numeric  
+## bestry       1    -none- numeric  
+## engine       1    -none- character
+## species     88    -none- numeric</code></pre>
+<p><strong>species</strong>: contains the ordination of species (added
+by the function after NMDS is performed, using weighted averages).<br />
+<strong>tries</strong>: number of starts with different initial
+conditions.<br />
+<strong>bestry</strong>: a “try” with the lowest stress value.</p>
+</section>
+
+<section id="visualize-the-results" class="title-slide slide level1">
+<h1>Visualize the results</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nmds_veg, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>, <span class="at">type =</span> <span class="st">&#39;n&#39;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(nmds_veg, <span class="at">disp=</span><span class="st">&quot;sites&quot;</span>, <span class="at">col=</span><span class="st">&#39;black&#39;</span>) </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(nmds_veg, <span class="at">disp=</span><span class="st">&quot;spec&quot;</span>, <span class="at">col=</span><span class="st">&#39;red&#39;</span>, <span class="at">cex =</span> <span class="fl">0.8</span>) </span></code></pre></div>
+<p><img src="05_Lecture_NMDS_files/figure-revealjs/nmds%20plot-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="shepard-plot-for-nmds" class="title-slide slide level1">
+<h1>Shepard plot for NMDS</h1>
+<p>A plot of ordination distances and monotone or linear fit line
+against original dissimilarities.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stressplot</span> (nmds_veg)</span></code></pre></div>
+<p><img src="05_Lecture_NMDS_files/figure-revealjs/stresspl-1.png" width="50%" height="50%" style="display: block; margin: auto;" /></p>
+<div class="left-align">
+<p>Non-metric <span class="math inline">\(R^2 = 1 -
+Stress^2\)</span>;<br />
+<span class="math inline">\(R^2\)</span> for the linear fit shows the
+squared correlation between fitted values and ordination distances.</p>
+</div>
+</section>
+
+<section id="choice-of-the-number-of-dimensions"
+class="title-slide slide level1">
+<h1>Choice of the number of dimensions</h1>
+<p>Balance between the interpretability of the results (the fewer axes,
+the easier to interpret) and the goodness of fit.<br />
+So-called ‘scree’ plot can be used to visualise the change in stress
+value with increasing number of dimensions, to facilitate the choice of
+the number of dimensions.<br />
+The function <code>dimcheckMDS()</code> from <code>goeveg</code> package
+allows to fit automatically NMDS with different number of specified
+dimensions, and produce such a scree plot.</p>
+</section>
+
+<section id="scree-plot" class="title-slide slide level1">
+<h1>Scree plot</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dimcheckMDS</span>(varespec, <span class="at">k =</span> <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.3648452 
+## Run 1 stress 0.428999 
+## Run 2 stress 0.3580145 
+## ... New best solution
+## ... Procrustes: rmse 0.1297013  max resid 0.4704391 
+## Run 3 stress 0.4432812 
+## Run 4 stress 0.4332277 
+## Run 5 stress 0.5463723 
+## Run 6 stress 0.3788219 
+## Run 7 stress 0.5498084 
+## Run 8 stress 0.5324845 
+## Run 9 stress 0.5518041 
+## Run 10 stress 0.5527625 
+## Run 11 stress 0.552283 
+## Run 12 stress 0.5503031 
+## Run 13 stress 0.5467687 
+## Run 14 stress 0.4532514 
+## Run 15 stress 0.5231277 
+## Run 16 stress 0.5466577 
+## Run 17 stress 0.4209014 
+## Run 18 stress 0.411385 
+## Run 19 stress 0.5438345 
+## Run 20 stress 0.4386834 
+## *** Best solution was not repeated -- monoMDS stopping criteria:
+##     20: scale factor of the gradient &lt; sfgrmin
+## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.1843196 
+## Run 1 stress 0.2414482 
+## Run 2 stress 0.195049 
+## Run 3 stress 0.1869637 
+## Run 4 stress 0.1825658 
+## ... New best solution
+## ... Procrustes: rmse 0.04163213  max resid 0.1518343 
+## Run 5 stress 0.18458 
+## Run 6 stress 0.210871 
+## Run 7 stress 0.1869637 
+## Run 8 stress 0.2511325 
+## Run 9 stress 0.195049 
+## Run 10 stress 0.2282745 
+## Run 11 stress 0.202116 
+## Run 12 stress 0.1948413 
+## Run 13 stress 0.1974419 
+## Run 14 stress 0.1955837 
+## Run 15 stress 0.195584 
+## Run 16 stress 0.1955839 
+## Run 17 stress 0.1974408 
+## Run 18 stress 0.18458 
+## Run 19 stress 0.1955836 
+## Run 20 stress 0.2340461 
+## *** Best solution was not repeated -- monoMDS stopping criteria:
+##     18: stress ratio &gt; sratmax
+##      2: scale factor of the gradient &lt; sfgrmin
+## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.1176768 
+## Run 1 stress 0.1151672 
+## ... New best solution
+## ... Procrustes: rmse 0.05464634  max resid 0.1984661 
+## Run 2 stress 0.1151667 
+## ... New best solution
+## ... Procrustes: rmse 0.0004572026  max resid 0.001651435 
+## ... Similar to previous best
+## Run 3 stress 0.1418169 
+## Run 4 stress 0.117676 
+## Run 5 stress 0.1151671 
+## ... Procrustes: rmse 0.0003804067  max resid 0.001388534 
+## ... Similar to previous best
+## Run 6 stress 0.117676 
+## Run 7 stress 0.1151671 
+## ... Procrustes: rmse 0.000634559  max resid 0.002313222 
+## ... Similar to previous best
+## Run 8 stress 0.1151668 
+## ... Procrustes: rmse 0.0004574587  max resid 0.001669643 
+## ... Similar to previous best
+## Run 9 stress 0.115167 
+## ... Procrustes: rmse 0.0005611745  max resid 0.002049637 
+## ... Similar to previous best
+## Run 10 stress 0.1359239 
+## Run 11 stress 0.1176761 
+## Run 12 stress 0.115167 
+## ... Procrustes: rmse 0.0005918046  max resid 0.002172513 
+## ... Similar to previous best
+## Run 13 stress 0.1176763 
+## Run 14 stress 0.1176761 
+## Run 15 stress 0.1151668 
+## ... Procrustes: rmse 0.0004037562  max resid 0.001479637 
+## ... Similar to previous best
+## Run 16 stress 0.1151668 
+## ... Procrustes: rmse 0.0004177966  max resid 0.00150872 
+## ... Similar to previous best
+## Run 17 stress 0.117677 
+## Run 18 stress 0.1201571 
+## Run 19 stress 0.1151666 
+## ... New best solution
+## ... Procrustes: rmse 0.0001068357  max resid 0.0003905248 
+## ... Similar to previous best
+## Run 20 stress 0.115167 
+## ... Procrustes: rmse 0.000480352  max resid 0.001705324 
+## ... Similar to previous best
+## *** Best solution repeated 2 times
+## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.07735491 
+## Run 1 stress 0.07735506 
+## ... Procrustes: rmse 0.001105078  max resid 0.003434675 
+## ... Similar to previous best
+## Run 2 stress 0.07735443 
+## ... New best solution
+## ... Procrustes: rmse 0.0006864916  max resid 0.002430179 
+## ... Similar to previous best
+## Run 3 stress 0.07735467 
+## ... Procrustes: rmse 0.0008350287  max resid 0.002488573 
+## ... Similar to previous best
+## Run 4 stress 0.07735444 
+## ... Procrustes: rmse 0.0001783425  max resid 0.0005525421 
+## ... Similar to previous best
+## Run 5 stress 0.07735471 
+## ... Procrustes: rmse 0.0004020476  max resid 0.001138804 
+## ... Similar to previous best
+## Run 6 stress 0.07735468 
+## ... Procrustes: rmse 0.0002274979  max resid 0.0007193148 
+## ... Similar to previous best
+## Run 7 stress 0.07735471 
+## ... Procrustes: rmse 0.0007571571  max resid 0.002274256 
+## ... Similar to previous best
+## Run 8 stress 0.07740028 
+## ... Procrustes: rmse 0.00498777  max resid 0.01507104 
+## Run 9 stress 0.0859073 
+## Run 10 stress 0.07735469 
+## ... Procrustes: rmse 0.0003162033  max resid 0.0009755773 
+## ... Similar to previous best
+## Run 11 stress 0.07735448 
+## ... Procrustes: rmse 0.000568742  max resid 0.001883383 
+## ... Similar to previous best
+## Run 12 stress 0.07735472 
+## ... Procrustes: rmse 0.0005796127  max resid 0.001778546 
+## ... Similar to previous best
+## Run 13 stress 0.07735472 
+## ... Procrustes: rmse 0.0008925003  max resid 0.002664187 
+## ... Similar to previous best
+## Run 14 stress 0.07735488 
+## ... Procrustes: rmse 0.0008308151  max resid 0.002574698 
+## ... Similar to previous best
+## Run 15 stress 0.07735466 
+## ... Procrustes: rmse 0.0008664391  max resid 0.002580696 
+## ... Similar to previous best
+## Run 16 stress 0.07735479 
+## ... Procrustes: rmse 0.0003693972  max resid 0.001099493 
+## ... Similar to previous best
+## Run 17 stress 0.07735498 
+## ... Procrustes: rmse 0.0009555912  max resid 0.002820731 
+## ... Similar to previous best
+## Run 18 stress 0.07735497 
+## ... Procrustes: rmse 0.0002635333  max resid 0.0007617388 
+## ... Similar to previous best
+## Run 19 stress 0.07735476 
+## ... Procrustes: rmse 0.0007705376  max resid 0.002370179 
+## ... Similar to previous best
+## Run 20 stress 0.08210097 
+## *** Best solution repeated 16 times
+## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.06181158 
+## Run 1 stress 0.05942764 
+## ... New best solution
+## ... Procrustes: rmse 0.0713444  max resid 0.2094971 
+## Run 2 stress 0.06392596 
+## Run 3 stress 0.05942831 
+## ... Procrustes: rmse 0.0003949556  max resid 0.001019526 
+## ... Similar to previous best
+## Run 4 stress 0.0594337 
+## ... Procrustes: rmse 0.002265778  max resid 0.005224485 
+## ... Similar to previous best
+## Run 5 stress 0.05942788 
+## ... Procrustes: rmse 0.0004227112  max resid 0.0009411013 
+## ... Similar to previous best
+## Run 6 stress 0.05986727 
+## ... Procrustes: rmse 0.04380406  max resid 0.1277992 
+## Run 7 stress 0.0618382 
+## Run 8 stress 0.05986176 
+## ... Procrustes: rmse 0.0433188  max resid 0.1259994 
+## Run 9 stress 0.05942786 
+## ... Procrustes: rmse 0.0006891111  max resid 0.001462417 
+## ... Similar to previous best
+## Run 10 stress 0.05985814 
+## ... Procrustes: rmse 0.04287859  max resid 0.1259879 
+## Run 11 stress 0.05944099 
+## ... Procrustes: rmse 0.002643809  max resid 0.006109139 
+## ... Similar to previous best
+## Run 12 stress 0.05942796 
+## ... Procrustes: rmse 0.0006754525  max resid 0.001874258 
+## ... Similar to previous best
+## Run 13 stress 0.06196945 
+## Run 14 stress 0.05942817 
+## ... Procrustes: rmse 0.001166614  max resid 0.002864929 
+## ... Similar to previous best
+## Run 15 stress 0.05942771 
+## ... Procrustes: rmse 0.0003143357  max resid 0.0006706574 
+## ... Similar to previous best
+## Run 16 stress 0.05942841 
+## ... Procrustes: rmse 0.0004930788  max resid 0.0009551638 
+## ... Similar to previous best
+## Run 17 stress 0.06038614 
+## Run 18 stress 0.06039013 
+## Run 19 stress 0.05994577 
+## Run 20 stress 0.05942792 
+## ... Procrustes: rmse 0.0006793185  max resid 0.001312018 
+## ... Similar to previous best
+## *** Best solution repeated 10 times</code></pre>
+<p><img src="05_Lecture_NMDS_files/figure-revealjs/scree%20plot-1.png" width="40%" height="40%" style="display: block; margin: auto;" /></p>
+<pre><code>## [1] 0.35801455 0.18256581 0.11516663 0.07735443 0.05942764</code></pre>
+</section>
+
+<section id="add-supplementary-predictor-to-nmds"
+class="title-slide slide level1">
+<h1>Add supplementary predictor to NMDS</h1>
+<p>We want to test how the proportion of bare soil and the amount of N,
+P and K correlate with the ordinated samples on two dimensions.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(varechem)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>suppl.veg <span class="ot">&lt;-</span> <span class="fu">envfit</span>(nmds_veg <span class="sc">~</span> Baresoil <span class="sc">+</span> P <span class="sc">+</span> N <span class="sc">+</span> K, <span class="at">data=</span> varechem, <span class="at">perm =</span> <span class="dv">999</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>suppl.veg</span></code></pre></div>
+<pre><code>## 
+## ***VECTORS
+## 
+##             NMDS1    NMDS2     r2 Pr(&gt;r)  
+## Baresoil  0.92491 -0.38020 0.2508  0.058 .
+## P         0.61968  0.78485 0.1938  0.098 .
+## N        -0.05728 -0.99836 0.2536  0.053 .
+## K         0.76642  0.64234 0.1809  0.124  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Permutation: free
+## Number of permutations: 999</code></pre>
+</section>
+
+<section id="plot-supplementary-predictor-on-nmds"
+class="title-slide slide level1">
+<h1>Plot supplementary predictor on NMDS</h1>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nmds_veg, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>, <span class="at">type =</span> <span class="st">&#39;n&#39;</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(nmds_veg, <span class="at">disp=</span><span class="st">&quot;sites&quot;</span>, <span class="at">col=</span><span class="st">&#39;black&#39;</span>) </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(nmds_veg, <span class="at">disp=</span><span class="st">&quot;spec&quot;</span>, <span class="at">col=</span><span class="st">&#39;red&#39;</span>, <span class="at">cex =</span> <span class="fl">0.8</span>) </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(suppl.veg)</span></code></pre></div>
+<p><img src="05_Lecture_NMDS_files/figure-revealjs/plot%20env%20predictor-1.png" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+</section>
+
+<section id="questions" class="title-slide slide level1">
+<h1>Questions?</h1>
+
+</section>
+
+<section id="check-up" class="title-slide slide level1">
+<h1>Check-up</h1>
+<ul>
+<li class="fragment">What are the advantages of NMDS compared to other
+ordination approaches?<br />
+</li>
+<li class="fragment">Is testing supplementary variables in NMDS a proper
+statistical test? If so, what is it testing?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="05_Lecture_NMDS_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="05_Lecture_NMDS_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

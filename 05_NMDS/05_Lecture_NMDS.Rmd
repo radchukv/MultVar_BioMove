@@ -1,0 +1,154 @@
+---
+title: "Non-metric Multidimensional Scaling (NMDS)"
+author: "Radchuk Viktoriia"
+date: "2023-03-29"
+output:
+  revealjs::revealjs_presentation:
+    self_contained: false
+    incremental: true
+    css: ["../css/default.css"]
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(vegan)
+library(tidyverse)
+library(ggplot2)
+library(goeveg)
+```
+
+# NMDS
+- Non-metric ordination technique. Relies on the ranks of the dissimilarities.       
+- No restriction on types of the distance among objects, i.e. can use any dissimilarity measure among objects.     
+- No linear relations among descriptors assumed.    
+- Aims to locate objects in low dimensional ordination space (pre-specified by the user, usually 2 or 3 axes) in such a way that the Euclidean distances between these objects will reflect the dissimilarities among the objects in original multi-dimensional space.     
+- Iterative algorithm that tries to find best location of the objects in the reduced ordination space. Each run may have a different solution.    
+
+
+# Main differences to other ordination approaches
+- Iterative algorithm (no analytical solution)    
+- The position of objects in only a limited number of axes is calculated, whereas in most ordination techniques the positions along many axes are calculated but only a few are visualised.   
+- Not based on eigenvalue decomposition, so that the first axis does not represent the largest variation in the data. Thus, the axes may be arbitrarily rotated or inverted.   
+
+# Algorithm (simplified)   
+1. Specify the number $m$ of dimensions sought.
+2. Construct initial configuration of all objects in $m$ dimensions, this will be a starting point for the iterative algorithm. The output may depend on this step (remember 'butterfly effect'). Ways to chose initial configuration: generate randomly or use the results of PCoA ordination.    
+3. An iterative algorithm tries to position the objects in a given number of dimensions such as to decrease a so-called 'stress value'. Stress value measures how far the distances in the reduced ordination space are from monotonic of the distances in the original dissimilarity matrix. Stress value ranges between 0 and 1, the lower stress value, the better.
+4. The algorithm stops when the new iteration cannot lower the stress value or when the stress value reaches a pre-determined value (this is a tolerated lack-of-fit).
+5. Most NMDS softwares rotate the final solution using PCA, to help the interpretation.     
+
+# Stress
+$$Stress =\sqrt{\frac{\sum_{h, i}(d_{hi}-\hat{d}_{hi})^2}{\sum_{h, i}d_{hi}^2}}$$
+where $d_{hi}$ is the ordinated distances between objects h and i;    
+$\hat{d}_{hi}$ is the predicted distances from the regression of the ordinated distances and those in the original distance matrix.     
+
+Stress thus indicates lack of fit of the resulting ordination to the original distances.    
+
+# 'Rules of thumb' for stress value
+- stress > 0.2 indicates a rather non-satisfactory result,    
+- stress > 0.3 the ordination is said 'to be generated arbitrary, independently of the dissimilarities in the original matrix',  
+- stress < 0.1 indicates good fit between the original dissimilarities and the resulting ordination.      
+BUT: stress increases with the number of objects and number of descriptors. So, one cannot just compare stress values among data sets with different number of objects.   
+
+# Disadvantages of NMDS
+- Computationally intensive (this is what arguably limited its use still 20 years ago but becomes of no importance nowadays)  
+- Since it is an optimisation algorithm, it may fail to find the global best solution and instead be stuck in local minima (this is less of an issue nowadays when multiple rpeetitions can be run to check whether the algorithm indeed converged on the global optimum)    
+
+# Application: Vegetation data
+We use the same plant cover data taken from 24 sites on in total 44 species.   
+
+```{r dat, echo = TRUE}
+data(varespec)
+str(varespec)
+```
+
+# Run NMDS
+```{r nmds example, echo = TRUE}
+nmds_veg <- metaMDS(varespec, distance = 'bray', k = 2, wascores = TRUE)
+
+```
+
+# Results NMDS
+```{r nmds res, echo = TRUE}
+nmds_veg
+nmds_veg$points
+
+```
+
+
+# Interpret the results
+```{r nmds res2, echo = TRUE}
+summary(nmds_veg)
+
+
+```
+__species__: contains the ordination of species (added by the function after NMDS is performed, using weighted averages).      
+__tries__: number of starts with different initial conditions.   
+__bestry__: a "try" with the lowest stress value.      
+
+
+# Visualize the results
+```{r nmds plot, echo = TRUE, fig.align= 'center', out.height= '60%', out.width= '60%'}
+plot(nmds_veg, display = "sites", type = 'n')
+text(nmds_veg, disp="sites", col='black') 
+text(nmds_veg, disp="spec", col='red', cex = 0.8) 
+
+```
+
+
+# Shepard plot for NMDS
+A plot of ordination distances and monotone or linear fit line against original dissimilarities.   
+```{r stresspl, echo = TRUE, fig.align= 'center', out.height= '50%', out.width= '50%'}
+stressplot (nmds_veg)
+
+```
+
+::: {.left-align} 
+Non-metric $R^2 = 1 - Stress^2$;    
+$R^2$ for the linear fit shows the squared correlation between fitted values and ordination distances.    
+
+:::
+
+
+# Choice of the number of dimensions
+Balance between the interpretability of the results (the fewer axes, the easier to interpret) and the goodness of fit.   
+So-called 'scree' plot can be used to visualise the change in stress value with increasing number of dimensions, to facilitate the choice of the number of dimensions.   
+The function `dimcheckMDS()` from  `goeveg` package allows to fit automatically NMDS with different number of specified dimensions, and produce such a scree plot.   
+
+# Scree plot
+```{r scree plot, echo = TRUE, fig.align= 'center', out.height= '40%', out.width= '40%'}
+dimcheckMDS(varespec, k = 5)
+
+```
+
+# Add supplementary predictor to NMDS
+We want to test how the proportion of bare soil and the amount of N, P and K correlate with the ordinated samples on two dimensions.   
+```{r add env predictor, echo = TRUE}
+data(varechem)
+suppl.veg <- envfit(nmds_veg ~ Baresoil + P + N + K, data= varechem, perm = 999)
+suppl.veg
+```
+
+# Plot supplementary predictor on NMDS
+```{r plot env predictor, echo = TRUE, fig.align= 'center', out.height= '60%', out.width= '60%'}
+plot(nmds_veg, display = "sites", type = 'n')
+text(nmds_veg, disp="sites", col='black') 
+text(nmds_veg, disp="spec", col='red', cex = 0.8) 
+plot(suppl.veg)
+```
+
+# Questions?  
+
+
+# Check-up
+- What are the advantages of NMDS compared to other ordination approaches?    
+- Is testing supplementary variables in NMDS a proper statistical test? If so, what is it testing?   
+
+
+
+
+
